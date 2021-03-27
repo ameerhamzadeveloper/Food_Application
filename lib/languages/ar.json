@@ -1,0 +1,25 @@
+{
+  "home_page" : "الصفحة الرئيسية",
+  "find_resturant" : "ابحث عن مطعم",
+  "find_markeets" : "ابحث عن الأسواق",
+
+  "resturants" : "مطاعم",
+  "search_resturants" : "بحث المطاعم",
+
+  "nearby_resturants" : "مطاعم قريبة",
+  "markeets" : "الأسواق",
+  "search_markeets" : "أسواق البحث",
+
+  "previous_orders" : "الطلبات السابقة",
+
+  "feedback" : "ردود الفعل",
+  "help" : "مساعدة",
+  "privacy_policy" : "سياسة خاصة",
+  "about_us" : "معلومات عنا",
+  "logout" : "تسجيل خروج",
+
+  "wallet" : "محفظة نقود",
+  "your_card" : "بطاقتك",
+  "recent_transactions" : "التحويلات الاخيرة",
+  "see_all" : "اظهار الكل"
+}

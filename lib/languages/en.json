@@ -1,0 +1,27 @@
+{
+  "home_page" : "Home Page",
+  "find_resturant" : "Find Restaurant",
+  "find_markeets" : "Find Markets",
+
+  "resturants" : "Restaurants",
+  "search_resturants" : "Search Restaurants",
+  "nearby_resturants" : "Nearby Restaurants",
+
+  "markeets" : "Markets",
+  "search_markeets" : "Search Markets",
+
+  "previous_orders" : "Previous Orders",
+
+  "feedback" : "FeedBack",
+  "help" : "Help",
+  "privacy_policy" : "Privacy Policy",
+  "about_us" : "About Us!",
+  "logout" : "LogOut",
+
+  "wallet" : "Wallet",
+  "your_card" : "Your Card",
+  "recent_transactions" : "Recent Transactions",
+  "see_all" : "See all",
+
+  "recent_transactions" : "Recent Transactions"
+}
