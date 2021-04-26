@@ -1,15 +1,29 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/models/sign_up_model.dart';
-import 'package:provider/provider.dart';
 import '../constants.dart';
 import 'package:food_delivery_app/common_screens/phone_code_verify.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+import 'package:food_delivery_app/models/sign_up_model.dart';
+import 'package:provider/provider.dart';
 
 GlobalKey<FormState> _key = GlobalKey<FormState>();
 
-class PhoneSignUp extends StatelessWidget {
+class PhoneSignUp extends StatefulWidget {
+  @override
+  _PhoneSignUpState createState() => _PhoneSignUpState();
+}
+
+class _PhoneSignUpState extends State<PhoneSignUp> {
+  String phoneNo;
+
+  String smsCode;
+
+  String verificationId;
+
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<SignUpModel>(context);
     CountryCode countryCode;
     String _phoneController;
     return Scaffold(
@@ -68,6 +82,7 @@ class PhoneSignUp extends StatelessWidget {
                           onChanged: (val) {
                             _phoneController = val;
                           },
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                               hintText: "55 921 8735",
                           ),
@@ -89,12 +104,24 @@ class PhoneSignUp extends StatelessWidget {
                         color: kThemeColor,
                       ),
                       child: MaterialButton(
-                        onPressed: () {
+                        onPressed: ()async {
                           if(_key.currentState.validate()){
-                            // Provider.of<SignUpModel>(context,listen: false).onVerifyCode(_phoneController, context,countryCode);
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => PhoneCodeVerify(phone: _phoneController,code: countryCode,)
+                            
+                            await onVerifyCode(_phoneController, context,countryCode).whenComplete((){
+                               Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => PhoneCodeVerify(phone: _phoneController,code: countryCode,verificationCode:verificationId)
                             ));
+                            
+                            // var number = "$countryCode$_phoneController";
+                            // print(number.toString());
+                            // verifyPhone(context,number);
+                            // await provider.phoneAuth(number:number, context:context).then((value){
+                              
+                              //  Navigator.push(context, MaterialPageRoute(
+                              //   builder: (context) => PhoneCodeVerify(phone: _phoneController,code: countryCode,)
+                            // ));
+                            });
+                           
                           }
                         },
                         child: Text(
@@ -111,6 +138,119 @@ class PhoneSignUp extends StatelessWidget {
         ),
       ),
     );
+  }
+
+   onVerifyCode(String number, BuildContext context, countryCode) async {
+     print(countryCode.toString());
+     print(number.toString());
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      
+        phoneNumber: '+92$number',
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          await FirebaseAuth.instance
+              .signInWithCredential(credential)
+              .then((value) async {
+            if (value.user != null) {
+              //  Navigator.push(context, MaterialPageRoute(
+              //                   builder: (context) => PhoneCodeVerify(phone: number,code: countryCode,verificationCode:verificationId)
+              //               ));
+              // Navigator.pushAndRemoveUntil(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => Home()),
+              //     (route) => false);
+            }
+          });
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          print(e.message);
+        },
+        codeSent: (String verficationID, int resendToken) {
+          setState(() {
+            verificationId = verficationID;
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationID) {
+          setState(() {
+            verificationId = verificationID;
+            // notifyListeners();
+          });
+        },
+        timeout: Duration(seconds: 120));
+  }
+
+  Future<void> verifyPhone(context,phone) async {
+    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId) {
+      this.verificationId = verId;
+    };
+
+    final PhoneCodeSent smsCodeSent = (String verId, [int forceCodeResend]) {
+      this.verificationId = verId;
+      smsCodeDialog(context).then((value) {
+        print('Signed in');
+      });
+    };
+
+    final PhoneVerificationCompleted verifiedSuccess = ( user) {
+      print('verified');
+    };
+
+    final PhoneVerificationFailed veriFailed = ( exception) {
+      print('${exception.message}');
+    };
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phone,
+        codeAutoRetrievalTimeout: autoRetrieve,
+        codeSent: smsCodeSent,
+        timeout: const Duration(seconds: 5),
+        verificationCompleted: verifiedSuccess,
+        verificationFailed: veriFailed);
+  }
+
+  Future<bool> smsCodeDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new AlertDialog(
+            title: Text('Enter sms Code'),
+            content: TextField(
+              onChanged: (value) {
+                this.smsCode = value;
+              },
+            ),
+            contentPadding: EdgeInsets.all(10.0),
+            actions: <Widget>[
+              new FlatButton(
+                child: Text('Done'),
+                onPressed: () {
+                   final User user = FirebaseAuth.instance.currentUser;
+    final uid = user.uid;
+    print(user.uid);
+                  // FirebaseAuth.instance.currentUser().then((user) {
+                  //   if (user != null) {
+                  //     Navigator.of(context).pop();
+                  //     Navigator.of(context).pushReplacementNamed('/homepage');
+                  //   } else {
+                  //     Navigator.of(context).pop();
+                  //     signIn();
+                  //   }
+                  // });
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  signIn(context,number) {
+    FirebaseAuth.instance
+        .signInWithPhoneNumber(number,)
+        .then((user) {
+      Navigator.of(context).pushReplacementNamed('/homepage');
+    }).catchError((e) {
+      print(e);
+    });
   }
 }
 

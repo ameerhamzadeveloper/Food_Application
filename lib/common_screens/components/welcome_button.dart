@@ -8,6 +8,7 @@ class WelcomeButtons extends StatelessWidget {
   WelcomeButtons({this.onTap, this.title, this.icon});
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.only(
         top: 15.0,
@@ -22,7 +23,7 @@ class WelcomeButtons extends StatelessWidget {
           color: kThemeColor,
           onPressed: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            padding:  EdgeInsets.symmetric(horizontal: width/11),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

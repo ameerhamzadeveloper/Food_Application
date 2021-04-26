@@ -1,14 +1,15 @@
 import 'package:country_code_picker/country_code.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/common_screens/sign_up_role.dart';
-import 'package:food_delivery_app/customer_app/views/profile/create_profile.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../constants.dart';
 class PhoneCodeVerify extends StatelessWidget {
-  String phone;
-  CountryCode code;
-  PhoneCodeVerify({this.phone,this.code});
+  final String phone;
+  final CountryCode code;
+  final String verificationCode;
+  PhoneCodeVerify({this.phone,this.code,this.verificationCode});
   @override
   Widget build(BuildContext context) {
     TextEditingController _pinEditingController = TextEditingController();
@@ -45,12 +46,28 @@ class PhoneCodeVerify extends StatelessWidget {
                   currentText = val;
                 },
                 textInputAction: TextInputAction.done,
-                onSubmit: (pin) {
-                  if (pin.length == 6) {
-
-                  } else {
-
-                  }
+                onSubmit: (pin)async {
+                  try {
+                  await FirebaseAuth.instance
+                      .signInWithCredential(PhoneAuthProvider.credential(
+                          verificationId: verificationCode, smsCode: pin))
+                      .then((value) async {
+                    if (value.user != null) {
+                      print("Valid User");
+                      print(value.user.uid);
+                      print("Valid User");
+                      // Navigator.pushAndRemoveUntil(
+                      //     context,
+                      //     MaterialPageRoute(builder: (context) => ()),
+                      //     (route) => false);
+                    }
+                  });
+                } catch (e) {
+                  FocusScope.of(context).unfocus();
+                  print("invalid otp");
+                  // _scaffoldkey.currentState
+                  //     .showSnackBar(SnackBar(content: Text('invalid OTP')));
+                }
                 },
               ),
               SizedBox(height: 20,),
