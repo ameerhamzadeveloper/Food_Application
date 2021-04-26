@@ -1,13 +1,12 @@
 import 'package:country_code_picker/country_code.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/common_screens/sign_up_role.dart';
-import 'package:food_delivery_app/customer_app/views/profile/create_profile.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 
 import '../constants.dart';
 class PhoneCodeVerify extends StatelessWidget {
-  String phone;
-  CountryCode code;
+  final String phone;
+  final CountryCode code;
   PhoneCodeVerify({this.phone,this.code});
   @override
   Widget build(BuildContext context) {

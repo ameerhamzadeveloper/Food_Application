@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/common_widgets/map_pin_pill.dart';
 import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/customer_app/model/pin_pill_info.dart';
+import 'package:food_delivery_app/customer_app/views/orders/chat_screen.dart';
 import 'package:food_delivery_app/customer_app/views/orders/delivery_chat_screen.dart';
 import 'package:food_delivery_app/delivery_boy_app/models/deli_map_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,7 +13,7 @@ import 'package:provider/provider.dart';
 class TrackDeliBoy extends StatefulWidget {
   final double lat;
   final double long;
-  String docRef;
+  final String docRef;
   TrackDeliBoy({@required this.lat, @required this.long,this.docRef});
   @override
   _TrackDeliBoyState createState() => _TrackDeliBoyState();
@@ -86,20 +87,13 @@ class _TrackDeliBoyState extends State<TrackDeliBoy> {
                 color: kThemeColor,
                 height: 50,
                 onPressed: (){
-                  strem.collection('orders').doc(widget.docRef).update({
-                    'customerLat': 37.395660,
-                    'customerLong': -121.967071,
-                  });
-                  // showModalBottomSheet(
-                  //   context: context,
-                  // isScrollControlled: true,
-                  // builder: (context) => Container(
-                  // padding: EdgeInsets.only(
-                  // bottom: MediaQuery.of(context)
-                  //     .viewInsets
-                  //     .bottom),
-                  // child: DeliveryChatScreen(),
-                  // ));
+                  // strem.collection('orders').doc(widget.docRef).update({
+                  //   'customerLat': 37.395660,
+                  //   'customerLong': -121.967071,
+                  // });
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => ChatScreen('DJLM506941')
+                  ));
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

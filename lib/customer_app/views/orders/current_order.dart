@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/customer_app/model/profile_provider.dart';
+import 'package:food_delivery_app/customer_app/model/resturant/resturants_providers.dart';
 import 'package:food_delivery_app/customer_app/views/orders/track_order.dart';
 import 'package:provider/provider.dart';
 class CurrentOrders extends StatefulWidget {
@@ -19,18 +20,18 @@ class _CurrentOrdersState extends State<CurrentOrders> {
   Widget build(BuildContext context) {
     final stream = FirebaseFirestore.instance;
     final pro = Provider.of<ProfileProvider>(context);
+    final ordPro = Provider.of<NearResturantsProvider>(context);
      return Scaffold(
       body: StreamBuilder(
         stream: stream.collection('orders').where("customerId" ,isEqualTo: pro.userid).snapshots(),
         builder: (context,snapshort){
-          if(snapshort.data == null){
-
-
+          if(snapshort.data != null){
           if(snapshort.data.docs.length == 0){
             return Center(
               child: Text("No Orders"),
             );
             }else if(snapshort.hasData){
+            ordPro.isCurrentOrder = true;
             return ListView.builder(
               itemCount: snapshort.data.docs.length,
               itemBuilder: (ctx,i){
@@ -114,7 +115,7 @@ class _CurrentOrdersState extends State<CurrentOrders> {
           }else{
             return Center(child: Text("No Current Order"),);
           }}else{
-            return Center(child: CircularProgressIndicator(),);
+            return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(kThemeColor),),);
           }
         },
       ),

@@ -133,6 +133,7 @@ class _ResturantGeneralInfoState extends State<ResturantGeneralInfo> {
                 height: 50,
                 onPressed: () {
                   Navigator.pushNamed(context, resturantPersonalInfo);
+                  provider.getIdEmail();
                 },
                 color: kThemeColor,
                 child: Text(

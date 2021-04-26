@@ -13,9 +13,7 @@ import 'package:food_delivery_app/resturant_app/model/menu_card_item_model.dart'
 import 'package:food_delivery_app/resturant_app/model/menu_card_model.dart';
 import 'package:food_delivery_app/resturant_app/model/menu_list.dart';
 import 'package:food_delivery_app/routes/routes_names.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:latlong/latlong.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/resturant_list.dart';
@@ -23,7 +21,6 @@ import 'package:food_delivery_app/customer_app/model/resturant/resturants_model.
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NearResturantsProvider extends ChangeNotifier{
-  http.Client _client = http.Client();
   double lat;
   double lon;
   dynamic cardID;
@@ -42,24 +39,11 @@ class NearResturantsProvider extends ChangeNotifier{
   dynamic deliveryBoyEmail;
   int totalPrice = 0;
   int subtotal = 0;
-  String otherInstruction;
+  String otherInstruction = '';
+  bool isCurrentOrder = false;
 
 
 
-  get itemquant => itemQty;
-  int itemQty = 1;
-  void increaseItemQty(){
-    itemQty++;
-    notifyListeners();
-  }
-  void decreaseItemQty(){
-    itemQty--;
-    notifyListeners();
-  }
-  void makezerotoItemQty(){
-    itemQty = 1;
-    notifyListeners();
-  }
 
   void setOtherInst(String val){
     otherInstruction = val;
@@ -82,10 +66,12 @@ class NearResturantsProvider extends ChangeNotifier{
       'long': lon.toString(),
     }));
     var decode = jsonDecode(response.body);
-    print(decode);
+    print(" allllll ressssssss $decode");
     final pro = Provider.of<ResturantList>(context,listen: false);
     pro.allResturants.clear();
     for(var dec in decode['data']){
+      resurantLat = dec['lat'];
+      resturantLong = dec['long'];
       pro.allResturants.add(
           ResturantsModel(
             bName: dec['b_name'],
@@ -120,6 +106,9 @@ class NearResturantsProvider extends ChangeNotifier{
 
     }else{
       for (var dec in decode['data']) {
+        resurantLat = dec['lat'];
+        resturantLong = dec['long'];
+        print(" near ressssssss ${decode['data']}");
         pro.resturantList.add(
           ResturantsModel(
             bName: dec['b_name'],
@@ -134,7 +123,7 @@ class NearResturantsProvider extends ChangeNotifier{
         );
       }
     }
-    print("datum flag${decode}");
+    print("datum flag$decode");
     notifyListeners();
   }
 
@@ -218,7 +207,7 @@ class NearResturantsProvider extends ChangeNotifier{
     http.Response response = await http.post(url,body: ({
       'resturant_id' : resturantId,
       'lat': lat.toString(),
-      'g':lon.toString()
+      'long':lon.toString()
     }));
     if (200 == response.statusCode) {
       var de = json.decode(response.body);
@@ -238,6 +227,7 @@ class NearResturantsProvider extends ChangeNotifier{
     });
     notifyListeners();
   }
+
   List<ResturantInfo> shopInfo;
 
   Future<List<ResturantInfo>> fetchShopInfo() async {
@@ -261,7 +251,7 @@ class NearResturantsProvider extends ChangeNotifier{
   Future<void> showShopInfo()async{
     await fetchShopInfo().then((value){
       shopInfo = value;
-      print(shopInfo[0].card[1].cardName);
+      print(shopInfo[0].card[0].cardName);
     });
     notifyListeners();
   }
@@ -370,7 +360,9 @@ class NearResturantsProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void addToCart(dynamic itmName, dynamic itmDesc, String itmPrice,dynamic itmImage,restID,itmId){
+  void addToCart(dynamic itmName, dynamic itmDesc, String itmPrice,dynamic itmImage,restID,itmId,
+      {itemQty}){
+    //   cartItems.add(
     cartOrderList.add(
         CartMapModel(
             itemPrice: itmPrice.toString(),
@@ -379,6 +371,9 @@ class NearResturantsProvider extends ChangeNotifier{
             itemQty: itemQty.toString()
         )
     );
+    print("beforeitemQty");
+    print("$itemQty");
+    print("bdforeitemQty");
     cartItems.add(
         MenuCardItemsModel(
             itemPrice: itmPrice,
@@ -389,8 +384,11 @@ class NearResturantsProvider extends ChangeNotifier{
             itemQty: itemQty.toString()
         )
     );
+    print("itemQty");
+    print("$itemQty");
+    print("itemQty");
     // if(cartItems.isEmpty){
-    //   cartItems.add(
+
     //       MenuCardItemsModel(
     //           itemPrice: itmPrice,
     //           itemName: itmName,
@@ -492,15 +490,17 @@ class NearResturantsProvider extends ChangeNotifier{
   }
 
   cartInitFunctions(){
+    subtotal = 0;
+    totalPrice = 0;
     generateRandomString(4);
     generateRandomNumber(6);
     print("flag ${resturantInfos[0].deliPrice}");
     cartItems.forEach((element) {
-      subtotal = subtotal + int.parse(element.itemPrice);
+      subtotal = subtotal + int.parse(element.itemPrice) * int.parse(element.itemQty);
       totalPrice = subtotal + resturantInfos[0].deliPrice;
     });
     print(totalPrice);
-    notifyListeners();
+    // notifyListeners();
   }
   nagitiveSubtotal(int itemPrice){
     print("flag ${resturantInfos[0].deliPrice}");
@@ -522,12 +522,31 @@ class NearResturantsProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  Future<void> payWithCard(token) async {
+    print(totalPrice);
+    print(userId);
+    print(resturantId);
+    print(token);
+
+    String url = "https://tripps.live/tripp_food/pay/pay/charge.php";
+    http.Response response = await http.post(url,
+        body: ({
+          'method': 'charge',
+          'amount': totalPrice.toString(), //1000 is the $10
+          'currency': 'SAR',
+          'customer_id': userId.toString(), //1000 is the $10
+          'currency': 'USD',
+          'source': token,
+          'resturant': resturantId.toString(),
+          'description': 'testing pay....',
+        }));
+    var dec = json.decode(response.body);
+    print(dec);
+  }
+
 
   void sendOrderToAPI(context) async {
     final prov = Provider.of<ProfileProvider>(context,listen: false);
-    Map<String, String> map = {
-      'items': cartOrderList.map((items) => items.toJson()).toList().toString()
-    };
     String url = "${kServerUrlName}order.php";
     http.Client client = http.Client();
     Map<String, String> data = {
@@ -542,6 +561,7 @@ class NearResturantsProvider extends ChangeNotifier{
       'deliveryBoyStatus': "Active",
       'orderId' : '$baseOrderId$secndOrderNum',
       'other_instruction' :otherInstruction,
+      'payment_status': '0',
     };
     int i = 0;
     cartOrderList.forEach((element) {
@@ -553,6 +573,7 @@ class NearResturantsProvider extends ChangeNotifier{
       data['item_description[$i]'] = itemDesc.toString();
       i++;
     });
+    print("flageeeeeeed $data");
     http.Response response = await client.post(url, body: data);
     var decode = jsonDecode(response.body);
     print(decode);
@@ -572,9 +593,9 @@ class NearResturantsProvider extends ChangeNotifier{
       'items': cartOrderList.map((items) => items.toJson()).toList()
     };
     final prov = Provider.of<ProfileProvider>(context,listen: false);
-    FirebaseFirestore.instance.collection('orders').doc("${baseOrderId}${secndOrderNum}").set({
+    FirebaseFirestore.instance.collection('orders').doc("$baseOrderId$secndOrderNum").set({
       'customerId': userId,
-      'orderId' : '${baseOrderId}${secndOrderNum}',
+      'orderId' : '$baseOrderId$secndOrderNum',
       'deliveryBoyStatus': "Active",
       'customerLat': lat,
       'customerLong': lon,
@@ -582,16 +603,17 @@ class NearResturantsProvider extends ChangeNotifier{
       'customerName': prov.displayName,
       'customerPhone': prov.displayPhone,
       'customerAddress': "${prov.displayHouseNo} ${prov.displayStreet} ${prov.displayArea} ${prov.displayCity}",
-      'deliveryFee': resturantDeliPrice,
+      'deliveryFee': resturantInfos[0].deliPrice.toString(),
       'resturantId': resturantId,
       'totalItems': map,
+      'subtotal':subtotal,
       'totalPrice': totalPrice,
       'orderStatus': "Preparing",
-      'resturantName': resturantName,
-      'resturantImage':resturantImage,
-      'resturantEmail' : resturantEmail,
-      'resturantLat': resurantLat,
-      'resturantLong': resturantLong
+      'resturantName': resturantInfos[0].bName,
+      'resturantImage':resturantInfos[0].resutrantSelfie,
+      'resturantEmail' : resturantInfos[0].bName,
+      'resturantLat': resurantLat.toString(),
+      'resturantLong': resturantLong.toString()
     });
   }
 

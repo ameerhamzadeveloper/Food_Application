@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 class CurrentOrderBoy extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<DeliProfileProvider>(context);
@@ -17,6 +18,7 @@ class CurrentOrderBoy extends StatelessWidget {
     final mapPro = Provider.of<DeliMapModel>(context);
     var stream = FirebaseFirestore.instance;
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Current Order"),
       ),
@@ -25,7 +27,7 @@ class CurrentOrderBoy extends StatelessWidget {
           child: StreamBuilder(
             stream: stream.collection('orders').where("deliveryBoyId" ,isEqualTo: provider.userId).snapshots(),
             builder: (ctx,snapshot){
-              print(snapshot.data.docs.length.toString());
+             if(snapshot.data != null){
               if(snapshot.data.docs.length == 0){
                 return Center(child: Text("No Orders"),);
               }else if(snapshot.connectionState == ConnectionState.waiting){
@@ -116,9 +118,9 @@ class CurrentOrderBoy extends StatelessWidget {
                                 'deliveryBoyStatus': 'Delivered',
                               });
                               mapPro.completeOrderInDB(snapshot.data.docs[0]['orderId']);
-                              // stream.collection('orders').doc(snapshot.data.docs[0]['orderId']).delete().then((value){
-                              //   provid.deliverToBoy(list['orderId'], "Delivered");
-                              // });
+                              stream.collection('orders').doc(snapshot.data.docs[0]['orderId']).delete().then((value){
+                                provid.deliverToBoy(list['orderId'], "Delivered");
+                              });
                             }
 
                           },
@@ -130,7 +132,10 @@ class CurrentOrderBoy extends StatelessWidget {
                 );
               }else{
                 return Center(child: Text("No current order"),);
-              }
+              }}else{
+               return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(kThemeColor),),);
+             }
+
             },
           )
       ),

@@ -1,7 +1,5 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/models/sign_up_model.dart';
-import 'package:provider/provider.dart';
 import '../constants.dart';
 import 'package:food_delivery_app/common_screens/phone_code_verify.dart';
 

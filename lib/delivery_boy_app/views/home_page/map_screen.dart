@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/delivery_boy_app/models/deli_profile_provider.dart';
 import 'package:food_delivery_app/delivery_boy_app/views/orders/current_order.dart';
 import 'package:food_delivery_app/resturant_app/model/resturant_profile_provider.dart';
@@ -36,7 +37,7 @@ class _DeliMapScreenState extends State<DeliMapScreen> {
       context: context,
       child: AlertDialog(
         content: Container(
-          height: 150,
+          // height: 150,
           child: Column(
             children: [
               Text("Resturant Name",style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),),
@@ -93,20 +94,49 @@ class _DeliMapScreenState extends State<DeliMapScreen> {
         builder: (context,snapshot){
           if(snapshot.hasData && snapshot.data.docs.length > 0){
             return AlertDialog(
-              content: Column(
-                children: [
-                  Text("Resturant Name"),
-                  Text("4KM"),
-                  Text(""),
-                  IconButton(
-                    onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => CurrentOrderBoy()
-                      ));
-                    },
-                    icon: Icon(Icons.check,color: Colors.green,),
-                  )
-                ],
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.all(
+                      Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  // Get available height and width of the build area of this widget. Make a choice depending on the size.
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
+                  return Stack(
+                    children: [
+                      Container(
+                        color: Colors.transparent,
+                        height: height - 520,
+                        child: Column(
+                          children: [
+                            Container(
+                              color: Colors.white,
+                              height: height - 700,
+                              child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Image.asset("images/deliveryBoy.png" )),
+                            ),
+                            SizedBox(height: 40,),
+                            Text("Resturant Name",style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),),
+                            Text("4KM",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
+                            SizedBox(height: 20,),
+                            MaterialButton(
+                              minWidth: MediaQuery.of(context).size.width,
+                              color: kThemeColor,
+                              onPressed: (){
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) => CurrentOrderBoy()
+                                ));
+                              },
+                              child: Text("Accept",style: TextStyle(color: Colors.white),),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  );
+                },
               ),
             );
           }else{

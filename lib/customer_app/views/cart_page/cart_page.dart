@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/customer_app/model/navigation_bar_provider.dart';
 import 'package:food_delivery_app/customer_app/model/profile_provider.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/resturants_providers.dart';
+import 'package:food_delivery_app/customer_app/model/wallet_provider.dart';
+import 'package:food_delivery_app/customer_app/navigation_bar/navigation_bar.dart';
 import 'package:food_delivery_app/customer_app/views/cart_page/components/cart_item.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/customer_app/views/profile/address_page.dart';
+import 'package:food_delivery_app/customer_app/views/wallet/add_card.dart';
 import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -19,6 +25,11 @@ class _CartPageState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
+    StripePayment.setOptions(StripeOptions(
+        publishableKey:
+        "pk_test_51HmL50JgRTIAdsOfi2rmC7wsmSO0D8c5WhHtc7hF4ynY1RxHga5e1BmYC9jaKyAUqLX2kb334mtZSwy75fZZ42XG00Twg7quAx",
+        merchantId: "Test",
+        androidPayMode: 'test'));
     final pro = Provider.of<NearResturantsProvider>(context,listen: false);
     pro.getUserIdEmail();
     pro.cartInitFunctions();
@@ -27,6 +38,8 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     final provider = Provider.of<NearResturantsProvider>(context);
     final pro = Provider.of<ProfileProvider>(context);
+    final wpro = Provider.of<WalletProvider>(context);
+    final navPro = Provider.of<NavigationProvider>(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -106,10 +119,11 @@ class _CartPageState extends State<CartPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Payment Method",style: TextStyle(fontSize: 18),),
+                    wpro.isCardAdded ?
                     ListTile(
                       leading: Icon(Icons.credit_card_sharp),
-                      title: Text("VISA Classic"),
-                      subtitle: Text("7889 8787 787 7887"),
+                      title: Text(wpro.cardHolderName),
+                      subtitle: Text(wpro.cardNumber),
                       trailing: Radio(
                         value: paymentRad,
                         onChanged: (val){
@@ -120,6 +134,25 @@ class _CartPageState extends State<CartPage> {
                         },
                         groupValue: 1,
                       ),
+                    )
+                        : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        MaterialButton(
+                          color: Colors.white,
+                          onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => AddCard()
+                            ));
+                          },
+                          child: Row(
+                            children: [
+                              Icon(Icons.add),
+                              Text("Add Card"),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     provider.userFiveOrder >= 5 ?
                     ListTile(
@@ -194,9 +227,31 @@ class _CartPageState extends State<CartPage> {
                 minWidth: MediaQuery.of(context).size.width,
                 onPressed: () async{
                   if(provider.cartOrderList.isEmpty && provider.cartItems.isEmpty){
-                    print("Please add some items to your Cart");
+                    showToast("Please add some items to your Cart", duration: Toast.LENGTH_LONG);
+                  }else if(wpro.isCardAdded == true || provider.userFiveOrder >= 5){
+                    // provider.sendOrderToAPI(context);
+                    if(provider.isCurrentOrder == true){
+                      showToast("You Have Already Active Order", duration: Toast.LENGTH_LONG);
+                      navPro.index = 1;
+                      Future.delayed(Duration(seconds: 1),(){
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => NavigationBar()
+                        ));
+                      });
+                    }else{
+                      provider.sendOrderToAPI(context);
+                      // final CreditCard testCard = CreditCard(
+                      //     number: wpro.cardNumber,
+                      //     expMonth: int.parse(wpro.expiryDate.substring(0, 2)),
+                      //     expYear: int.parse(wpro.expiryDate.substring(3, 5)));
+                      // StripePayment.createTokenWithCard(testCard).then((token) {
+                      //   var prov = Provider.of<NearResturantsProvider>(context, listen: false);
+                      //   prov.payWithCard(token.tokenId);
+                      //   print(token.tokenId);
+                      // });
+                    }
                   }else{
-                    provider.sendOrderToAPI(context);
+                    showToast("Please Add Your Credit Card", duration: Toast.LENGTH_LONG);
                   }
                 },
                 child: Text("Place Order",
@@ -207,5 +262,8 @@ class _CartPageState extends State<CartPage> {
         ),
       ),
     );
+  }
+  void showToast(String msg, {int duration, int gravity}) {
+    Toast.show(msg, context, duration: duration, gravity: 3,textColor: Colors.red,backgroundColor: Colors.grey[200],);
   }
 }

@@ -11,7 +11,6 @@ import 'package:food_delivery_app/customer_app/views/wallet/wallet.dart';
 import 'package:food_delivery_app/constants.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:food_delivery_app/customer_app/services/signup_user_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/resturants_providers.dart';
 
@@ -36,13 +35,14 @@ class _NavigationBarState extends State<NavigationBar> {
     mrPro.lon = position.longitude;
     pro.lat = position.latitude;
     pro.lon = position.longitude;
-    idPro.showUSerAddress();
-    idPro.fetchUserProfile();
+    await idPro.showUSerAddress();
+    await idPro.fetchUserProfile();
     print(position.latitude);
     print(position.longitude);
     print(idPro.userid);
     final walletProv = Provider.of<WalletProvider>(context,listen: false);
-    walletProv.fetchCardWallet(context);
+    await walletProv.fetchCardWallet(context);
+    idPro.showTransaction();
     // final proc = Provider.of<WalletProvider>(context,listen: false);
     // proc.fetchCardWallet();
   }

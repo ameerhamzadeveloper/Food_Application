@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/resturant_card_items_model.dart';
@@ -25,10 +27,11 @@ class OrdersProvider extends ChangeNotifier{
     print(signUpId);
   }
 
-  Future<void> fetchCurrentOrders() async{
+  Future<void> fetchCurrentOrders(BuildContext context) async{
+    final pro = Provider.of<ResturantProfileProvider>(context,listen: false);
     String url = "${kServerUrlName}my_con_order.php";
     http.Response response = await http.post(url,body:({
-      'resturant_id' : signUpId,
+      'resturant_id' : pro.resturantId,
     }));
     var decode = jsonDecode(response.body);
     orderItems = decode['data'][0]['items'];
@@ -74,9 +77,17 @@ class OrdersProvider extends ChangeNotifier{
 
   dynamic earnings;
   dynamic totalORder;
+  var perEarningCircle;
+  var perEarningInside;
+
+  var perOrderCircle;
+  var perOrderInside;
 
   Future<void> fetchDashboard(BuildContext context) async{
     final pro = Provider.of<ResturantProfileProvider>(context,listen: false);
+    print("pro.resturantId");
+    print(pro.resturantId);
+    print("pro.resturantId");
     String url = "${kServerUrlName}res_dashboard.php";
     http.Response response = await http.post(url,body: ({
       'resturant_id' : pro.resturantId
@@ -84,10 +95,13 @@ class OrdersProvider extends ChangeNotifier{
     var dec = json.decode(response.body);
     if(response.statusCode == 200){
       totalORder = dec['data'][0]['total_order'];
-      earnings = (dec['data'][0]['total_earning']).floor();
+      earnings = (dec['data'][0]['total_earning']);
       var ePer = dec['data'][0]['total_earning'];
-      var ePercentage = earnings * 100 / 10000;
-      print(ePercentage);
+      perEarningInside = earnings * 100 / 10000;
+      perEarningCircle = perEarningInside/100;
+      print("falged pay $perEarningInside and $perOrderCircle");
+      perOrderInside = int.parse(totalORder) * 100 / 20;
+      perOrderCircle = perOrderInside /100;
       // earningPercentage = ePercentage.toDouble();
     }
     print(dec);
@@ -118,9 +132,10 @@ class OrdersProvider extends ChangeNotifier{
     var dec = json.decode(response.body);
     if(response.statusCode == 200){
       // earningPercentage = ePercentage.toDouble();
-      rating = dec['rating'];
+      var ratinag = dec['data'][0]['rating'];
+      rating = (int.parse(ratinag) * 5) / int.parse(totalORder);
     }
-    print(dec['rating']);
+    print(dec['data'][0]['rating']);
     notifyListeners();
   }
 
@@ -140,5 +155,10 @@ class OrdersProvider extends ChangeNotifier{
  //   print(earningPercentage);
  //   notifyListeners();
  // }
+  String audioUrl = "ring.mp3";
+  final audioPlayer = new AudioCache(fixedPlayer: AudioPlayer());
+  void playBackgroundMusic() async {
+    await audioPlayer.play(audioUrl);
+  }
 
 }

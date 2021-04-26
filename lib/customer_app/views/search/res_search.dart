@@ -136,3 +136,4 @@ class _ResutrantSearchState extends State<ResutrantSearch> {
     );
   }
 }
+

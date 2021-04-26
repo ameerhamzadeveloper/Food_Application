@@ -1,4 +1,3 @@
-import 'package:food_delivery_app/resturant_app/model/menu_card_item_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/cart_list_model.dart';
 part 'cart_model.g.dart';

@@ -19,20 +19,22 @@ class CurrentOrders extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: StreamBuilder(
-          stream: stream.collection('orders').where("resturantId" ,isEqualTo: provider.userid).snapshots(),
+          stream: stream.collection('orders').where("resturantId" ,isEqualTo: provider.resturantId).snapshots(),
           builder: (ctx,snapshot){
-            print(snapshot.data.docs.length.toString());
-            print(provider.userid);
+            // print(snapshot.data.docs.length.toString());
+            print(provider.resturantId);
+            if(snapshot.data != null){
             if(snapshot.data.docs.length == 0){
               return Center(child: Text("No Orders"),);
             }else if(snapshot.connectionState == ConnectionState.waiting){
               return Center(child: Text("No Orders"),);
             }else if(snapshot.hasData){
+              ordPro.playBackgroundMusic();
               return ListView.builder(
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (ctx,index){
                   var list = snapshot.data.docs[index];
-                  if(snapshot.data.docs[index]['orderStatus'] == "Preparing" && snapshot.data.docs[index]['resturantId'] == provider.userid){
+                  if(snapshot.data.docs[index]['orderStatus'] == "Preparing" && snapshot.data.docs[index]['resturantId'] == provider.resturantId){
                     return Card(
                       elevation: 5.0,
                       child: Padding(
@@ -59,19 +61,15 @@ class CurrentOrders extends StatelessWidget {
                                     children: [
                                       Text("$i"),
                                       Text("${list2['itemName']}"),
-                                      Text("1x"),
+                                      Text("${list2['itemQty']}x"),
                                       Text("${list2['itemPrice']} SAR"),
                                     ],
                                   ),
                                 );
                               },
                             ),
-                            SizedBox(height: 20,),
-                            Text("Commission : 20 SAR"),
                             SizedBox(height: 10,),
-                            Text("Delivery fee : 50 SAR"),
-                            SizedBox(height: 10,),
-                            Text("Total : 150 SAR"),
+                            Text("Total : ${list['subtotal']} SAR"),
                             SizedBox(height: 20,),
                             MaterialButton(
                               color: kThemeColor,
@@ -82,7 +80,7 @@ class CurrentOrders extends StatelessWidget {
                                   'orderStatus': 'Way',
                                 });
                               },
-                              child: Text("Deliver to Boy"),
+                              child: Text("Deliver to Boy",style:TextStyle(color:Colors.white)),
                             )
                           ],
                         ),
@@ -96,7 +94,11 @@ class CurrentOrders extends StatelessWidget {
             }
             else{
               return Center(child: Text("No Current Orders"),);
-            }
+            }}
+            return Padding(
+              padding: const EdgeInsets.only(top:20.0),
+              child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(kThemeColor),)),
+            );
           },
         )
       ),

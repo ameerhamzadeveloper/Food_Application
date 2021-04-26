@@ -20,7 +20,7 @@ class AddressPage extends StatelessWidget {
               elevation: 5.5,
               child: ListTile(
                   leading: Icon(Icons.home),
-                  title: Text("${pro.deliveryHouse} ${pro.deliveryStreet} ${pro.deliveryArea} ${pro.deliveryCity}"?? "Loading...."),
+                  title: Text("${pro.userAddresses[i].houseNo} ${pro.userAddresses[i].streetNo} ${pro.userAddresses[i].area} ${pro.userAddresses[i].city}"?? "Loading...."),
                   subtitle: Text("Home"),
                   trailing:Text("Home")
               ),
