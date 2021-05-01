@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/common_clip_paths/signup_uper_clip.dart';
 import 'package:food_delivery_app/models/sign_up_model.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
 GlobalKey<FormState> _key = GlobalKey<FormState>();
@@ -20,9 +19,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
   }
   @override
   Widget build(BuildContext context) {
-    var _error;
-    String email;
-    String password;
+    final height = MediaQuery.of(context).size.height;
     final providerEmailModel = Provider.of<SignUpModel>(context);
     return Scaffold(
       body: SingleChildScrollView(
@@ -51,7 +48,10 @@ class _EmailSignUpState extends State<EmailSignUp> {
             ),
             providerEmailModel.showError(),
             providerEmailModel.isLoading ? Center(
-              child: CircularProgressIndicator(backgroundColor: kThemeColor,),
+              child: Padding(
+                padding:  EdgeInsets.only(top:height/4),
+                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(kThemeColor),),
+              ),
             ):
             Card(
               // elevation: 10.0,
@@ -81,9 +81,9 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         ),
                         TextFormField(
                           onChanged: (val) {
-                            email = val;
                             providerEmailModel.setEmail(val);
                           },
+                          keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(hintText: "Email"),
                           validator: (String value) {
                             if (value.isEmpty) {
@@ -103,7 +103,6 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         TextFormField(
                           obscureText: true,
                           onChanged: (val) {
-                            password = val;
                             providerEmailModel.setPass(val);
                           },
                           decoration:
@@ -137,7 +136,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                           ),
                           height: 50,
                           onPressed: () {
-                            providerEmailModel.loading();
+
                             if(_key.currentState.validate()){
                               if(providerEmailModel.isSignUp == true){
                                 providerEmailModel.signInUser(context);

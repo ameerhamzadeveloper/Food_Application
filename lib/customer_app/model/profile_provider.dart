@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/common_screens/sign_up_welcome_screen.dart';
 import 'package:food_delivery_app/customer_app/model/my_orders_model.dart';
+import 'package:food_delivery_app/customer_app/model/my_transaction.dart';
 import 'package:food_delivery_app/customer_app/model/user_address_model.dart';
+import 'package:food_delivery_app/routes/routes_names.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +27,9 @@ class ProfileProvider extends ChangeNotifier {
   String storedEmail;
   bool isAddress = false;
   bool isCardAdded = false;
+  bool isLoading = false;
+  String defaultImage = "https://i.stack.imgur.com/l60Hf.png";
+  bool isImage = false;
 
 
   void addressEnter(){
@@ -71,19 +77,59 @@ class ProfileProvider extends ChangeNotifier {
 
   // upload create user profile
   Future<dynamic>  uploadUserProfileInfo(BuildContext context) async {
-    String url = "${kServerUrlName}profile.php";
-   var request = await http.MultipartRequest('POST',Uri.parse(url));
-   var imagee = await http.MultipartFile.fromPath('img', image.path);
-   request.fields['login_id'] = userid;
-   request.fields['name'] = name;
-   request.fields['email'] = email;
-   request.fields['phone'] = phone;
-   request.fields['house_no'] = houseNo;
-    request.fields['street_no'] = streetNo;
-    request.fields['area'] = area;
-    request.fields['city'] = city;
-   request.files.add(imagee);
-   request.send();
+    if(image != null){
+      print(userid);
+      print(name);
+      print(email);
+      print(phone);
+      print(houseNo);
+      print(streetNo);
+      print(area);
+      print(city);
+      try{
+        isLoading = true;
+        notifyListeners();
+        print(image.path);
+        String url = "${kServerUrlName}profile.php";
+        var request = await http.MultipartRequest('POST',Uri.parse(url));
+        var imagee = await http.MultipartFile.fromPath('img', image.path);
+        // request.fields['img'] = image.path.toString();
+        request.fields['login_id'] = userid;
+        request.fields['name'] = name;
+        request.fields['email'] = email;
+        request.fields['phone'] = phone;
+        request.fields['house_no'] = houseNo;
+        request.fields['street_no'] = streetNo;
+        request.fields['area'] = area;
+        request.fields['city'] = city;
+        request.files.add(imagee);
+        request.send();
+        Future<void> addAddress() async {
+          String url = "${kServerUrlName}add_address.php";
+          http.Response response = await http.post(url,body: ({
+            'house_no': houseNo,
+            'area': area,
+            'street_no': streetNo,
+            'city': city,
+            'user_signup_id': userid,
+            'address_type': 'Home',
+          }));
+          var de = json.decode(response.body);
+          print(de);
+        }
+        Future.delayed(Duration(seconds: 5),(){
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(navigationBar, (Route<dynamic> route) => false);
+        });
+        notifyListeners();
+      }catch(e){
+        isLoading = false;
+        notifyListeners();
+      }
+    }else{
+      isImage = true;
+      notifyListeners();
+    }
   }
 
   // fetching user profiles
@@ -107,7 +153,7 @@ class ProfileProvider extends ChangeNotifier {
     print(userid);
   }
 
-  void fetchUserProfile() async {
+  Future<void> fetchUserProfile() async {
     String url = "${kServerUrlName}fetch_userprofile.php";
     http.Response response = await http.post(url,body: ({
       'id': userid,
@@ -137,13 +183,12 @@ class ProfileProvider extends ChangeNotifier {
   static const String url = "${kServerUrlName}my_total_order.php";
 
   Future<List<MyTotalOrders>> myTotalOrders() async {
-
     http.Response response = await http.post(url,body: ({
-      'customer_id':userid,
+      'customer_id': userid,
     }));
     var dec = json.decode(response.body);
     print(dec);
-    if (200 == response.statusCode) {
+    if (200 == response.statusCode && dec[0]['status'] == 1) {
       List<MyTotalOrders> myOrders = myTotalOrdersFromJson(response.body);
       return myOrders;
     }else{
@@ -185,6 +230,12 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<void> addAddress() async {
     String url = "${kServerUrlName}add_address.php";
+    print(addHouse);
+    print(addArea);
+    print(addStreet);
+    print(addCity);
+    print(userid);
+    // print(addCity);
     http.Response response = await http.post(url,body: ({
       'house_no': addHouse,
       'area': addArea,
@@ -245,7 +296,39 @@ class ProfileProvider extends ChangeNotifier {
     print(response.statusCode);
   }
 
+  Future<List<MyTransaction>> myTransactions() async {
 
 
+    const String url = "${kServerUrlName}fetch_my_transactions.php";
+    http.Response response = await http.post(url,body: ({
+      'user_id':'60',
+    }));
+    var dec = json.decode(response.body);
+    print(dec);
+    if (200 == response.statusCode) {
+      List<MyTransaction> myOrders = myTransactionFromJson(response.body);
+      return myOrders;
+    }else{
+      return List<MyTransaction>();
+    }
 
+  }
+  List<MyTransaction> myTransaction;
+
+  void showTransaction()async{
+    await myTransactions().then((value){
+      myTransaction = value;
+    });
+    notifyListeners();
+  }
+
+  void logout(BuildContext context)async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove('id');
+    pref.remove('email');
+    pref.remove('role');
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+      builder: (context) => SignUpWelcome()
+    ), (route) => false);
+  }
 }

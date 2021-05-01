@@ -53,6 +53,7 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
     final provider = Provider.of<ResturantProfileProvider>(context);
     final ordProvdier = Provider.of<OrdersProvider>(context);
     final menuProvider = Provider.of<MenuProvider>(context);
+
     return Scaffold(
       drawer: Drawer(
         child: Column(
@@ -126,7 +127,7 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
             ListTile(
               onTap: () {
 
-                ordProvdier.fetchCurrentOrders();
+                ordProvdier.fetchCurrentOrders(context);
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) => CurrentOrders()
                 ));
@@ -150,13 +151,12 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
             Divider(),
             ListTile(
               onTap: () {
-                ordProvdier.fetchDashboard(context);
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => ResturantWallet(),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ResturantWallet(),
+                  ),
+                );
               },
               title: Text("Wallet"),
               trailing: Icon(Icons.arrow_forward_ios),
@@ -188,7 +188,9 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
               trailing: Icon(Icons.arrow_forward_ios),
             ),
             FlatButton(
-              onPressed: () {},
+              onPressed: () {
+                provider.logout(context);
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -271,7 +273,7 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
                                 height: 15,
                               ),
                               Text(
-                                ordProvdier.totalORder ?? "0",
+                                ordProvdier.orders == null ? "0":ordProvdier.totalORder.toString() ?? "0",
                                 style: topCardHead,
                               )
                             ],
@@ -291,7 +293,7 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
                                 height: 15,
                               ),
                               Text(
-                                "${ordProvdier.rating ?? "0"}.0",
+                                "${ordProvdier.rating ?? "0.0"}",
                                 style: topCardHead,
                               )
                             ],
@@ -306,7 +308,7 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
                                 height: 15,
                               ),
                               Text(
-                                "${ordProvdier.cancelOrders ?? "0"}",
+                                "${ordProvdier.cancelOrd ?? "0"}",
                                 style: topCardHead,
                               )
                             ],
@@ -324,27 +326,26 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
                   children: [
                     CircularIndicator(
                       color: Colors.green,
-                      // ordProvdier.earningPercentage ??
-                      percent:  0.0,
-                      prcntiner: "${ordProvdier.earningPercentage ?? "0"}%",
+                      percent: ordProvdier.perEarningCircle ?? 0.0,
+                      prcntiner:ordProvdier.perEarningInside==null?"0": "${ordProvdier.perEarningInside.floor() ?? "0"}%",
                       title: "Earnings",
                     ),
                     CircularIndicator(
                       color: Colors.orange,
-                      percent: 0.0,
-                      prcntiner: "${ordProvdier.earningPercentage ?? "0"}%",
+                      percent: ordProvdier.perOrderCircle ?? 0.0,
+                      prcntiner: "${ordProvdier.perOrderInside ?? "0"}%",
                       title: "Orders",
                     ),
                     CircularIndicator(
                       color: Colors.green,
-                      percent: 1.0,
-                      prcntiner: "100%",
+                      percent: ordProvdier.circRating ?? 0.0,
+                      prcntiner: "${ordProvdier.circInsideRating ?? "0"}%",
                       title: "Rating",
                     ),
                     CircularIndicator(
                       color: Colors.red,
-                      percent: 0.3,
-                      prcntiner: "30%",
+                      percent: ordProvdier.cancelOrdCir ?? 0.0,
+                      prcntiner: "${ordProvdier.cancelOrders ?? "0"}%",
                       title: "Cancel",
                     ),
                   ],

@@ -8,24 +8,25 @@ import 'package:food_delivery_app/customer_app/model/profile_provider.dart';
 import 'package:food_delivery_app/customer_app/model/wallet_provider.dart';
 import 'package:food_delivery_app/customer_app/views/wallet/all_transactions.dart';
 import 'package:food_delivery_app/routes/routes_names.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class Wallet extends StatefulWidget {
+class AddCard extends StatefulWidget {
   @override
-  _WalletState createState() => _WalletState();
+  _AddCardState createState() => _AddCardState();
 }
 
-class _WalletState extends State<Wallet> {
+class _AddCardState extends State<AddCard> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final pro = Provider.of<WalletProvider>(context);
     final profPro = Provider.of<ProfileProvider>(context);
     return Scaffold(
+      key: _scaffoldKey,
         appBar: AppBar(
           leading: Container(),
           title: Text(
-            kGetTranslated(context, 'wallet')
+              kGetTranslated(context, 'wallet')
           ),
         ),
         body: SingleChildScrollView(
@@ -78,7 +79,8 @@ class _WalletState extends State<Wallet> {
                           onPressed: ()async{
                             await pro.addCardIntoWallet(context);
                             if(pro.isCardAdded == true){
-                              Scaffold.of(context).showSnackBar(SnackBar(content: Text("Card Added Successfully!")));
+                              _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Card Added Successfully!")));
+                              Navigator.pop(context);
                             }
                           },
                           child: Text("Add Card",style: TextStyle(color: Colors.white),),
@@ -88,41 +90,6 @@ class _WalletState extends State<Wallet> {
                   ),
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(kGetTranslated(context, 'recent_transactions')),
-                        FlatButton(
-                          onPressed: (){
-                            Navigator.pushNamed(context, allTransactions);
-                          },
-                          child: Text("See all"),
-                        )
-                      ],
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: profPro.myTransaction == null ? 0 : profPro.myTransaction.length,
-                      itemBuilder: (ctx,i){
-                        var date = profPro.myTransaction[i].date;
-                        var finalDate = DateFormat('yyyy-MM-dd').format(date);
-                        return  Card(
-                          elevation: 5.0,
-                          child: ListTile(
-                            title: Text("SAR ${profPro.myTransaction[i].totalPrice}"),
-                            subtitle: Text(profPro.myTransaction[i].resturant),
-                            trailing: Text(finalDate),
-                          ),
-                        );
-                      },
-                    )
-                  ],
-                ),
-              )
             ],
           ),
         )

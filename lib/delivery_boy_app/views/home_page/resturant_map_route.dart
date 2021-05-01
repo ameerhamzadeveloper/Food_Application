@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/delivery_boy_app/models/deli_map_model.dart';
 import 'package:geolocator/geolocator.dart';

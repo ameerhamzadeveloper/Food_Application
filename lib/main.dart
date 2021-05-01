@@ -140,6 +140,10 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'Food Delivery App',
         theme: ThemeData(
+          inputDecorationTheme: InputDecorationTheme(
+            focusColor: kThemeColor,
+            hoverColor: kThemeColor
+          ),
           appBarTheme: AppBarTheme(
             color: kThemeColor,
             centerTitle: true,

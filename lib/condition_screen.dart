@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/customer_app/navigation_bar/navigation_bar.dart';
-import 'package:food_delivery_app/start_app_screen.dart';
 
 class ConditionScreen extends StatefulWidget {
   @override

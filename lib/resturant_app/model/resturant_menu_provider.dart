@@ -34,7 +34,7 @@ class MenuProvider extends ChangeNotifier {
   }
   Future<void> getIdEmail() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    resturantId = preferences.getString('id');
+    resturantId = preferences.getString('resturantId');
     resturantEmail = preferences.getString('email');
     print(resturantId);
   }
@@ -112,6 +112,8 @@ class MenuProvider extends ChangeNotifier {
     http.Response response = await http.post(url,body: ({
       'resturant_id': resturantId,
     }));
+    print(response.body.toString());
+    print("user id $resturantId");
     if (200 == response.statusCode) {
       List<ResturantCardItems> myOrders = resturantCardItemsFromJson(response.body);
       return myOrders;

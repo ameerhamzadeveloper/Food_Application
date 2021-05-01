@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/customer_app/model/drop_down_list.dart';
 import 'package:food_delivery_app/customer_app/model/profile_provider.dart';
+import 'package:food_delivery_app/customer_app/views/orders/chat_screen.dart';
 import 'package:food_delivery_app/customer_app/views/orders/track_deli_boy.dart';
 import 'package:provider/provider.dart';
 class TrackOrder extends StatefulWidget {
@@ -14,8 +15,8 @@ class TrackOrder extends StatefulWidget {
 
 class _TrackOrderState extends State<TrackOrder> {
   var stream = FirebaseFirestore.instance;
-  double lat;
-  double long;
+  var lat;
+  var long;
   @override
   Widget build(BuildContext context) {
     final pro = Provider.of<ProfileProvider>(context);
@@ -31,6 +32,8 @@ class _TrackOrderState extends State<TrackOrder> {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) => TrackDeliBoy(lat: lat, long: long,docRef: widget.docRef,)
                   ));
+                }else{
+
                 }
               },
               icon: Icon(Icons.more_vert,color: Colors.white,),
@@ -44,12 +47,12 @@ class _TrackOrderState extends State<TrackOrder> {
       ),
       body: StreamBuilder(
         stream: stream.collection('orders').doc(widget.docRef).snapshots(),
-        builder: (ctx,snapshot){
-          print(snapshot.data['totalItems']['items'].length);
+        builder: (ctx,AsyncSnapshot<DocumentSnapshot> snapshot){
           if(snapshot.hasData){
-            lat = snapshot.data['customerLat'];
-            long = snapshot.data['customerLong'];
-            print(lat);
+            print(snapshot.data.data());
+            lat = snapshot.data['deliLat'];
+            long = snapshot.data['deliLong'];
+            print(snapshot.data['orderId']);
             return SingleChildScrollView(
               child: Column(
                 children: [
@@ -63,7 +66,7 @@ class _TrackOrderState extends State<TrackOrder> {
                       ),
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: NetworkImage(kImageUrlEnd+snapshot.data['resturantImage'])
+                        image: NetworkImage("https://tripps.live/tripp_food/${snapshot.data.data()["resturantImage"]}")
                       )
                     ),
                   ),
@@ -91,7 +94,7 @@ class _TrackOrderState extends State<TrackOrder> {
                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                          children: [
                            Text("Your Order From"),
-                           Text(snapshot.data['resturantName'],style: TextStyle(fontWeight: FontWeight.bold),),
+                           Text(snapshot.data['resturantName'] ?? "Loading",style: TextStyle(fontWeight: FontWeight.bold),),
                          ],
                        ),
                        SizedBox(height: 5,),
@@ -128,7 +131,7 @@ class _TrackOrderState extends State<TrackOrder> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("1x",style: TextStyle(fontWeight: FontWeight.w600),),
+                                Text("${list['itemQty']}x",style: TextStyle(fontWeight: FontWeight.w600),),
                                 Text(list['itemName']),
                                 Text(list['itemPrice']),
                               ],
@@ -149,7 +152,7 @@ class _TrackOrderState extends State<TrackOrder> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Subtotal",style: TextStyle(fontWeight: FontWeight.w600),),
-                            Text("SAR ${snapshot.data['totalPrice'].toString()}")
+                            Text("SAR ${snapshot.data['subtotal'].toString()}")
                           ],
                         ),
                         SizedBox(height: 10,),

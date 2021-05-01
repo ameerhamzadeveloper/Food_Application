@@ -5,6 +5,7 @@ import 'package:food_delivery_app/customer_app/model/resturant/cart_map_model.da
 import 'package:food_delivery_app/customer_app/model/resturant/resturant_list.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/resturants_providers.dart';
 import 'package:food_delivery_app/customer_app/views/cart_page/components/cart_bottom_sheet.dart';
+import 'package:food_delivery_app/customer_app/views/home/resturants/components/item_bottom_shaeet.dart';
 import 'package:food_delivery_app/customer_app/views/home/resturants/resturants.dart';
 import 'package:food_delivery_app/resturant_app/model/menu_card_item_model.dart';
 import 'package:food_delivery_app/resturant_app/model/menu_list.dart';
@@ -27,7 +28,11 @@ class _ResturantsDetailsState extends State<ResturantsDetails> {
   AutoScrollController _autoScrollController;
   final scrollDirection = Axis.vertical;
 
+  PersistentBottomSheetController _controller; // <------ Instance variable
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   bool isExpaned = true;
+  int itemQty = 1;
   bool get _isAppBarExpanded {
     return _autoScrollController.hasClients &&
         _autoScrollController.offset > (160 - kToolbarHeight);
@@ -194,114 +199,12 @@ class _ResturantsDetailsState extends State<ResturantsDetails> {
                             return Center(child: Text("No Items"),);
                           }else{
                             return InkWell(
-                              onTap: () {
+                              onTap: () async{
+
                                 showModalBottomSheet(
-                                  context: context,
-                                    builder: (context) => Container(
-                                      height: 500,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(50),
-                                          topRight: Radius.circular(50),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                bottomLeft: Radius.circular(100),
-                                                bottomRight: Radius.circular(20),
-                                              ),
-                                                image: DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                    image: NetworkImage(
-                                                        "https://tripps.live/tripp_food/${l.itmeImg}"
-                                                    )
-                                                ),
-                                                // color: Colors.white,
-                                            ),
-                                            height: 250,
-                                            width: MediaQuery.of(context).size.width,
-                                          ),
-                                          SizedBox(height: 20,),
-                                          Padding(
-                                            padding: const EdgeInsets.all(15.0),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(l.itemName,style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),),
-                                                    Text("${l.itemPrice} SAR",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 10,),
-                                                Text(l.itemDescription),
-                                                SizedBox(height: 40,),
-                                                Row(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: (){
-                                                        pr.decreaseItemQty();
-                                                      },
-                                                      child: Card(
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(100)
-                                                        ),
-                                                        elevation: 3.0,
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Icon(AntDesign.minus,size: 20,),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 10,),
-                                                    Text("${pr.itemquant.toString()}"),
-                                                    SizedBox(width: 10,),
-                                                    InkWell(
-                                                      onTap: (){
-                                                        pr.increaseItemQty();
-                                                      },
-                                                      child: Card(
-                                                        color: kThemeColor,
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(100),
-                                                        ),
-                                                        elevation: 3.0,
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Icon(AntDesign.plus,size: 20,color: Colors.white,),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 10,),
-                                                    Expanded(
-                                                      child: MaterialButton(
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(10)
-                                                        ),
-                                                        height: 50,
-                                                        color: kThemeColor,
-                                                        onPressed: (){
-                                                          pr.makezerotoItemQty();
-                                                          pr.addToCart(l.itemName, l.itemDescription, l.itemPrice.toString(), l.itmeImg, list[0].resturantId,l.itemId);
-                                                          print("cartORderLsit ${pr.cartOrderList.length}");
-                                                          print("cartItems ${pr.cartItems.length}");
-                                                          Navigator.pop(context);
-                                                        },
-                                                        child: Text("Add To Cart",style: TextStyle(color: Colors.white),),
-                                                      ),
-                                                    )
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ));
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (context) => ItemBottomSheet(l:l,pr:pr,list:list));
 
                               },
                               child: ListTile(
@@ -364,6 +267,7 @@ class _ResturantsDetailsState extends State<ResturantsDetails> {
       ),
     );
   }
+
 }
 
 // Widget io(){

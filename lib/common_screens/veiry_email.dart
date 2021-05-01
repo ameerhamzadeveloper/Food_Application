@@ -7,9 +7,9 @@ import 'package:provider/provider.dart';
 class VerifyEmail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
     TextEditingController _pinEditingController = TextEditingController();
     final provider = Provider.of<SignUpModel>(context);
-    String currentText;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -25,7 +25,11 @@ class VerifyEmail extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
+          child: provider.isLoading? Padding(
+            padding:  EdgeInsets.only(top: height/4),
+            child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(kThemeColor),)),
+
+        ) :  Column(
             // crossAxisAlignment: CrossAxisAlignment.center,
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -39,7 +43,6 @@ class VerifyEmail extends StatelessWidget {
                 controller: _pinEditingController,
                 autoFocus: true,
                 onChanged: (val){
-                  currentText = val;
                   provider.setCode(val);
                 },
                 textInputAction: TextInputAction.done,
@@ -51,6 +54,15 @@ class VerifyEmail extends StatelessWidget {
                   }
                 },
               ),
+              SizedBox(height: 20,),
+              provider.isCodeInvalid ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.info,color: Colors.red,),
+                  SizedBox(width: 5,),
+                  Text("Invalid Code",style: TextStyle(color: Colors.red),),
+                ],
+              ): Container(),
               SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

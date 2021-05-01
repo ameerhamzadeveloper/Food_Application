@@ -14,6 +14,8 @@ class ResturantInfo {
     this.resutrantSelfie,
     this.resStatus,
     this.resturantId,
+    this.lat,
+    this.long,
     this.deliPrice,
     this.card,
   });
@@ -22,6 +24,8 @@ class ResturantInfo {
   String resutrantSelfie;
   int resStatus;
   String resturantId;
+  double lat;
+  double long;
   int deliPrice;
   List<Card> card;
 
@@ -30,6 +34,8 @@ class ResturantInfo {
     resutrantSelfie: json["resutrant_selfie"],
     resStatus: json["resStatus"],
     resturantId: json["resturant_id"],
+    lat: json["lat"].toDouble(),
+    long: json["long"].toDouble(),
     deliPrice: json["deli_price"],
     card: List<Card>.from(json["card"].map((x) => Card.fromJson(x))),
   );
@@ -39,6 +45,8 @@ class ResturantInfo {
     "resutrant_selfie": resutrantSelfie,
     "resStatus": resStatus,
     "resturant_id": resturantId,
+    "lat": lat,
+    "long": long,
     "deli_price": deliPrice,
     "card": List<dynamic>.from(card.map((x) => x.toJson())),
   };
@@ -96,22 +104,22 @@ class Item {
   int itemStatus;
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
-    itemId: json["item_id"],
-    itemPrice: json["item_price"],
-    itmeImg: json["itme_img"],
-    itemName: json["item_name"],
-    itemDescription: json["item_description"],
-    cardId: json["card_id"],
+    itemId: json["item_id"] == null ? null : json["item_id"],
+    itemPrice: json["item_price"] == null ? null : json["item_price"],
+    itmeImg: json["itme_img"] == null ? null : json["itme_img"],
+    itemName: json["item_name"] == null ? null : json["item_name"],
+    itemDescription: json["item_description"] == null ? null : json["item_description"],
+    cardId: json["card_id"] == null ? null : json["card_id"],
     itemStatus: json["itemStatus"],
   );
 
   Map<String, dynamic> toJson() => {
-    "item_id": itemId,
-    "item_price": itemPrice,
-    "itme_img": itmeImg,
-    "item_name": itemName,
-    "item_description": itemDescription,
-    "card_id": cardId,
+    "item_id": itemId == null ? null : itemId,
+    "item_price": itemPrice == null ? null : itemPrice,
+    "itme_img": itmeImg == null ? null : itmeImg,
+    "item_name": itemName == null ? null : itemName,
+    "item_description": itemDescription == null ? null : itemDescription,
+    "card_id": cardId == null ? null : cardId,
     "itemStatus": itemStatus,
   };
 }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/common_clip_paths/signup_uper_clip.dart';
 import 'package:food_delivery_app/constants.dart';
+import 'package:food_delivery_app/customer_app/model/profile_provider.dart';
 import 'package:food_delivery_app/delivery_boy_app/models/dash_order.dart';
 import 'package:food_delivery_app/delivery_boy_app/models/deli_profile_provider.dart';
 import 'package:food_delivery_app/delivery_boy_app/views/orders/current_order.dart';
 import 'package:food_delivery_app/delivery_boy_app/views/orders/recent_order.dart';
 import 'package:food_delivery_app/delivery_boy_app/views/orders/view_order.dart';
+import 'package:food_delivery_app/delivery_boy_app/views/wallet/deli_wallet.dart';
 import 'package:food_delivery_app/resturant_app/model/resturant_profile_provider.dart';
 import 'package:food_delivery_app/resturant_app/views/home/components/circular_indicator.dart';
 import 'package:food_delivery_app/routes/routes_names.dart';
@@ -57,6 +59,7 @@ class _DeliveryBoyHomePageState extends State<DeliveryBoyHomePage> {
     final dash = Provider.of<DashOrders>(context);
     final proPro = Provider.of<DeliProfileProvider>(context);
     final textThem = Theme.of(context).textTheme;
+    final providere = Provider.of<ProfileProvider>(context);
     return Scaffold(
       drawer: Drawer(
         child: Column(
@@ -147,7 +150,9 @@ class _DeliveryBoyHomePageState extends State<DeliveryBoyHomePage> {
             Divider(),
             ListTile(
               onTap: () {
-
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => DeliWallet()
+                ));
               },
               title: Text("Wallet"),
               trailing: Icon(Icons.arrow_forward_ios),
@@ -170,7 +175,7 @@ class _DeliveryBoyHomePageState extends State<DeliveryBoyHomePage> {
             ),
             FlatButton(
               onPressed: () {
-
+                providere.logout(context);
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

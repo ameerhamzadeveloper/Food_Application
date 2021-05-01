@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:geolocator/geolocator.dart';
 
 class NavigationProvider extends ChangeNotifier{
   int index = 0;

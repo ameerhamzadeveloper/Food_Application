@@ -28,37 +28,43 @@ class _OrderHistoryState extends State<OrderHistory> {
           var ord = prov.orders[0];
           var date = ord.date;
           var finalDate = DateFormat('yyyy-MM-dd').format(date);
-          return InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (ctx) => ViewOrders(
-                        addres: ord.customerAddress,
-                        orderId: ord.orderId,
-                        orderStatus: ord.orderStatus,
-                        orders: prov.orders,
-                        title: ord.bName,
-                        image: ord.resutrantSelfie,
-                        date: finalDate,
-                        delPrice: ord.deliveryFee,
-                        totalPrice: ord.totalPrice,
-                        index: i,
-                      )));
-            },
-            child: Card(
-              elevation: 5.0,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  leading: Image.network("https://tripps.live/tripp_food/${ord.resutrantSelfie}"),
-                  title: Text(ord.bName ?? "Loading"),
-                  subtitle: Text(ord.items[i].itemDescription ?? "Loading..."),
-                  trailing: Text(finalDate ?? "Loading..."),
+          if(prov.orders.isNotEmpty){
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (ctx) => ViewOrders(
+                          addres: ord.customerAddress,
+                          orderId: ord.orderId,
+                          orderStatus: ord.orderStatus,
+                          orders: prov.orders,
+                          title: ord.bName,
+                          image: ord.resutrantSelfie,
+                          date: finalDate,
+                          delPrice: ord.deliveryFee,
+                          totalPrice: ord.totalPrice,
+                          index: i,
+                        )));
+              },
+              child: Card(
+                elevation: 5.0,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    leading: Image.network("https://tripps.live/tripp_food/${ord.resutrantSelfie}"),
+                    title: Text(ord.bName ?? "Loading"),
+                    subtitle: Text(ord.items[0].itemDescription ?? "Loading..."),
+                    trailing: Text(finalDate ?? "Loading..."),
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+          }else{
+            return Center(
+              child: Text("No Recent Orders"),
+            );
+          }
         },
       ),
     );

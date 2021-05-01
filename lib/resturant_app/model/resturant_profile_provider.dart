@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:food_delivery_app/common_screens/sign_up_welcome_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -103,8 +104,6 @@ class ResturantProfileProvider extends ChangeNotifier{
       return Image.file(
         resturantImage,
         fit: BoxFit.fill,
-        height: 120,
-        width: 120,
       );
     } else {
       return Center(
@@ -132,8 +131,6 @@ class ResturantProfileProvider extends ChangeNotifier{
       return Image.file(
         cnicFront,
         fit: BoxFit.fill,
-        height: 120,
-        width: 120,
       );
     } else {
       return Center(
@@ -161,8 +158,6 @@ class ResturantProfileProvider extends ChangeNotifier{
       return Image.file(
         cnicBack,
         fit: BoxFit.fill,
-        height: 120,
-        width: 120,
       );
     } else {
       return Center(
@@ -272,42 +267,48 @@ class ResturantProfileProvider extends ChangeNotifier{
 
   Future<void> uploadResturantInfo(BuildContext context) async {
     String url = "${kServerUrlName}resturant_info.php";
-    var request = await http.MultipartRequest('POST',Uri.parse(url));
+    try{
+      var request = await http.MultipartRequest('POST',Uri.parse(url));
+      print(userid);
 
-    var selfie = await http.MultipartFile.fromPath('my_selfie', selfieImage.path);
-    var resturantImg = await http.MultipartFile.fromPath('resutrant_selfie', resturantImage.path);
-    var cardFront = await http.MultipartFile.fromPath('id_front', cnicFront.path);
-    var cardBack = await http.MultipartFile.fromPath('id_back', cnicBack.path);
+      var selfie = await http.MultipartFile.fromPath('my_selfie', selfieImage.path);
+      var resturantImg = await http.MultipartFile.fromPath('resutrant_selfie', resturantImage.path);
+      var cardFront = await http.MultipartFile.fromPath('id_front', cnicFront.path);
+      var cardBack = await http.MultipartFile.fromPath('id_back', cnicBack.path);
 
-    request.fields['login_id'] = userid;
-    request.fields['b_name'] = businessName;
-    request.fields['b_description'] = businessDescription;
-    request.fields['firstname'] = firstName;
-    request.fields['lastname'] = lastName;
-    request.fields['b_address'] = businessAddress;
-    request.fields['email'] = email;
-    request.fields['phone'] = contact;
-    request.fields['vertical'] = providerValue ?? "Resturant";
-    request.fields['vertical_segment'] = segments ?? "Regular Resturant";
-    request.fields['cuisine'] = cuisine ?? "Other";
-    request.fields['city'] = city;
-    request.fields['comercial_reg'] = commercialReg;
-    request.fields['lat'] = "$lat";
-    request.fields['long'] = "$long";
-    request.fields['no_of_branches'] = noOfBranches;
-    request.fields['franchise'] = doYouHaveFranchise == 0 ? "Yes":"No";
-    request.fields['delivery'] = doYouHaveDeliveryService == 0 ? "Yes":"No";
-    request.fields['deli_application'] = doYouHaveOtherApplications == 0 ? "Yes":"No";
-    request.fields['owner'] = areYouTheOwner == 0 ? "Yes":"No";
+      request.fields['login_id'] = userid;
+      request.fields['b_name'] = businessName;
+      request.fields['b_description'] = businessDescription;
+      request.fields['firstname'] = firstName;
+      request.fields['lastname'] = lastName;
+      request.fields['b_address'] = businessAddress;
+      request.fields['email'] = email;
+      request.fields['phone'] = contact;
+      request.fields['vertical'] = providerValue ?? "Resturant";
+      request.fields['vertical_segment'] = segments ?? "Regular Resturant";
+      request.fields['cuisine'] = cuisine ?? "Other";
+      request.fields['city'] = city;
+      request.fields['comercial_reg'] = commercialReg;
+      request.fields['lat'] = "${lat.toString()}";
+      request.fields['long'] = "$long";
+      request.fields['no_of_branches'] = noOfBranches;
+      request.fields['franchise'] = doYouHaveFranchise == 0 ? "Yes":"No";
+      request.fields['delivery'] = doYouHaveDeliveryService == 0 ? "Yes":"No";
+      request.fields['deli_application'] = doYouHaveOtherApplications == 0 ? "Yes":"No";
+      request.fields['owner'] = areYouTheOwner == 0 ? "Yes":"No";
 
-    request.files.add(selfie);
-    request.files.add(resturantImg);
-    request.files.add(cardFront);
-    request.files.add(cardBack);
-    http.StreamedResponse response = await request.send();
-    response.stream.transform(utf8.decoder).listen((value) {
-      print(value);
-    });
+      request.files.add(selfie);
+      request.files.add(resturantImg);
+      request.files.add(cardFront);
+      request.files.add(cardBack);
+      http.StreamedResponse response = await request.send();
+      response.stream.transform(utf8.decoder).listen((value) {
+        print(value);
+      });
+    }catch(e){
+       print(e);
+       print(e.message);
+    }
   }
   String resturantId;
   void saveSharedPreference(String id) async{
@@ -336,6 +337,16 @@ class ResturantProfileProvider extends ChangeNotifier{
       print(decode['data'][0]['id']);
     }
     notifyListeners();
+  }
+
+  void logout(BuildContext context)async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove('id');
+    pref.remove('email');
+    pref.remove('role');
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+        builder: (context) => SignUpWelcome()
+    ), (route) => false);
   }
 
   // function for raiting

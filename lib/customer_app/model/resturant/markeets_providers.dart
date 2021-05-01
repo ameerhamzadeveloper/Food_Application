@@ -34,13 +34,13 @@ class MarkeetsProviders with ChangeNotifier{
         pro.markeets.add(
             MarkeetsModel(
                 bName: dec['b_name'],
-                deliFee: '50',
-                description: 'Grocery items Foods Items',
+                deliFee: dec['delivery_fee'].toString(),
+                description: dec['description'],
                 id: dec['id'],
                 markeetSelfie: dec['resutrant_selfie'],
-                minimum: '99',
-                rating: '4.5',
-                ratingLength: '7'
+                minimum: dec['minval'].toString(),
+                rating: dec['rating'],
+                ratingLength: dec['length'].toString()
             )
         );
     }

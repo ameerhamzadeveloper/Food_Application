@@ -18,7 +18,6 @@ class SignUpUserService extends ChangeNotifier{
     final url = "https://unforewarned-rolls.000webhostapp.com/trippApi/getSignUpUsers.php";
     final response = await http.get(url);
     if(response.statusCode == 200){
-      var decode = json.decode(response.body);
       List<SignUpUser> users = signUpUserFromJson(response.body);
       return users;
     }else{

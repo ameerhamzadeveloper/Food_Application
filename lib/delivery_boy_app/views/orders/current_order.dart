@@ -1,22 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/customer_app/model/resturant/resturants_providers.dart';
 import 'package:food_delivery_app/delivery_boy_app/models/deli_map_model.dart';
 import 'package:food_delivery_app/delivery_boy_app/models/deli_profile_provider.dart';
 import 'package:food_delivery_app/delivery_boy_app/views/home_page/map_route.dart';
+import 'package:food_delivery_app/delivery_boy_app/views/home_page/map_screen.dart';
 import 'package:food_delivery_app/delivery_boy_app/views/home_page/resturant_map_route.dart';
 import 'package:food_delivery_app/resturant_app/model/orders_porvider.dart';
 import 'package:food_delivery_app/resturant_app/model/resturant_profile_provider.dart';
+import 'package:food_delivery_app/resturant_app/views/orders/chat_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 class CurrentOrderBoy extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    final providerd = Provider.of<NearResturantsProvider>(context);
     final provider = Provider.of<DeliProfileProvider>(context);
     final provid = Provider.of<OrdersProvider>(context);
     final mapPro = Provider.of<DeliMapModel>(context);
     var stream = FirebaseFirestore.instance;
+    String totalPrie = '0';
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Current Order"),
       ),
@@ -25,7 +32,7 @@ class CurrentOrderBoy extends StatelessWidget {
           child: StreamBuilder(
             stream: stream.collection('orders').where("deliveryBoyId" ,isEqualTo: provider.userId).snapshots(),
             builder: (ctx,snapshot){
-              print(snapshot.data.docs.length.toString());
+             if(snapshot.data != null){
               if(snapshot.data.docs.length == 0){
                 return Center(child: Text("No Orders"),);
               }else if(snapshot.connectionState == ConnectionState.waiting){
@@ -66,7 +73,7 @@ class CurrentOrderBoy extends StatelessWidget {
                           },
                         ),
                         SizedBox(height: 20,),
-                        Text("Resturant : ${['resturantName']}"),
+                        Text("Resturant : ${list['resturantName']}"),
                         SizedBox(height: 10,),
                         Text("Customer Name : ${list['customerName']}"),
                         SizedBox(height: 10,),
@@ -74,7 +81,11 @@ class CurrentOrderBoy extends StatelessWidget {
                         SizedBox(height: 10,),
                         Text("Customer Address : ${list['customerAddress']}"),
                         SizedBox(height: 10,),
-                        Text("Total : 150 SAR"),
+                        Text("Subtotal : ${list['subtotal']} SAR"),
+                        SizedBox(height: 10,),
+                        Text("Delivery Fee : ${list['deliveryFee']} SAR"),
+                        SizedBox(height: 10,),
+                        Text("Total : ${list['totalPrice'].toString()} SAR"),
                         SizedBox(height: 20,),
                         list['deliveryBoyStatus'] == "Active" ?
                         MaterialButton(
@@ -107,6 +118,16 @@ class CurrentOrderBoy extends StatelessWidget {
                           color: kThemeColor,
                           minWidth: MediaQuery.of(context).size.width,
                           onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => DeliverChatScreen(list.id, 'Driver')
+                            ));
+                          },
+                          child:Text("Chat",style: TextStyle(color: Colors.white),),
+                        ),
+                        MaterialButton(
+                          color: kThemeColor,
+                          minWidth: MediaQuery.of(context).size.width,
+                          onPressed: ()async{
                             if(list['deliveryBoyStatus'] == "Active"){
                               stream.collection('orders').doc(snapshot.data.docs[0]['orderId']).update({
                                 'deliveryBoyStatus': 'Picked',
@@ -115,10 +136,14 @@ class CurrentOrderBoy extends StatelessWidget {
                               stream.collection('orders').doc(snapshot.data.docs[0]['orderId']).update({
                                 'deliveryBoyStatus': 'Delivered',
                               });
-                              mapPro.completeOrderInDB(snapshot.data.docs[0]['orderId']);
-                              // stream.collection('orders').doc(snapshot.data.docs[0]['orderId']).delete().then((value){
-                              //   provid.deliverToBoy(list['orderId'], "Delivered");
-                              // });
+                              await mapPro.completeOrderInDB(snapshot.data.docs[0]['orderId']);
+                              await stream.collection('orders').doc(snapshot.data.docs[0]['orderId']).delete().then((value){
+                                provid.deliverToBoy(list['orderId'], "Delivered");
+                              });
+                              providerd.isCurrentOrder = false;
+                              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                                builder: (context) => DeliMapScreen()
+                              ), (route) => false);
                             }
 
                           },
@@ -130,7 +155,10 @@ class CurrentOrderBoy extends StatelessWidget {
                 );
               }else{
                 return Center(child: Text("No current order"),);
-              }
+              }}else{
+               return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(kThemeColor),),);
+             }
+
             },
           )
       ),

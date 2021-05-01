@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:food_delivery_app/customer_app/model/resturant/all_resturants_model.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/markeets_model.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/resturants_model.dart';
 

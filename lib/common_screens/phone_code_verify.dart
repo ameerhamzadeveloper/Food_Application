@@ -8,8 +8,12 @@ import '../constants.dart';
 class PhoneCodeVerify extends StatelessWidget {
   final String phone;
   final CountryCode code;
+<<<<<<< HEAD
   final String verificationCode;
   PhoneCodeVerify({this.phone,this.code,this.verificationCode});
+=======
+  PhoneCodeVerify({this.phone,this.code});
+>>>>>>> 54fabc0d041870aef2131e8915e3b0f334befbcd
   @override
   Widget build(BuildContext context) {
     TextEditingController _pinEditingController = TextEditingController();

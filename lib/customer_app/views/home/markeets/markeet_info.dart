@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/resturant_list.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/resturants_providers.dart';
+import 'package:food_delivery_app/customer_app/views/home/resturants/components/item_bottom_shaeet.dart';
 import 'package:food_delivery_app/resturant_app/model/menu_list.dart';
 import 'package:food_delivery_app/routes/routes_names.dart';
 import 'package:provider/provider.dart';
@@ -105,12 +106,12 @@ class _MarkeetstsDetailsState extends State<MarkeetstsDetails> {
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax,
         centerTitle: true,
-        title: Text(pr.resturantName ?? "",
+        title: Text(pr.shopInfo[0].bName ?? "",
             style: TextStyle(
               color: Colors.white,
               fontSize: 16.0,
             )),
-        background: Image.network("https://tripps.live/tripp_food/${pr.resturantImage}",fit: BoxFit.fill,),
+        background: Image.network("https://tripps.live/tripp_food/${pr.shopInfo[0].resutrantSelfie}",fit: BoxFit.fill,),
         // background: BackgroundSliverAppBar(),
       ),
       bottom: PreferredSize(
@@ -192,28 +193,9 @@ class _MarkeetstsDetailsState extends State<MarkeetstsDetails> {
                           }else{
                             return InkWell(
                               onTap: () {
-                                if(pr.cartItems.isEmpty){
-                                  pr.addToCart(l.itemName, l.itemDescription, l.itemPrice.toString(), l.itmeImg, list[0].resturantId,l.itemId);
-                                }else{
-                                  pr.cartItems.forEach((element) async{
-                                    if(element.itemName == l.itemName){
-                                      element.itemQty = (int.parse(element.itemQty)+1).toString();
-                                    }else{
-                                      pr.addToCart(l.itemName, l.itemDescription, l.itemPrice.toString(), l.itmeImg, list[0].resturantId,l.itemId);
-                                    }
-                                  });
-                                }
-                                if(pr.cartOrderList.isEmpty){
-                                  pr.addToCart(l.itemName, l.itemDescription, l.itemPrice.toString(), l.itmeImg, list[0].resturantId,l.itemId);
-                                }else{
-                                  pr.cartOrderList.forEach((element) {
-                                    if(element.itemName == l.itemName){
-                                      element.itemQty = (int.parse(element.itemQty)+1).toString();
-                                    }else{
-                                      pr.addToCart(l.itemName, l.itemDescription, l.itemPrice.toString(), l.itmeImg, list[0].resturantId,l.itemId);
-                                    }
-                                  });
-                                }
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) => ItemBottomSheet(l:l,pr:pr,list:list));
                                 print("cartORderLsit ${pr.cartOrderList.length}");
                                 print("cartItems ${pr.cartItems.length}");
                               },

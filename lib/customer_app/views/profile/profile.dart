@@ -184,9 +184,7 @@ class _ProfileViewState extends State<ProfileView> {
                     ),
                     FlatButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => ResturantPersonalInfo()
-                        ));
+                        provider.logout(context);
                       },
                       child: Row(
                         children: [

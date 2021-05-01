@@ -23,6 +23,7 @@ class SignUpModel extends ChangeNotifier {
   String role;
   dynamic id;
   String storedEmail;
+  bool isCodeInvalid = false;
   String code;
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   String _verificationId;
@@ -322,7 +323,7 @@ print(firebaseUser.user);
 //     });
 //   }
   void loading() {
-    isLoading = false;
+    isLoading = true;
     notifyListeners();
   }
   // signup into signin by bool value
@@ -372,6 +373,8 @@ print(firebaseUser.user);
   void signUpUser(BuildContext context) async {
     print(email);
     print(password);
+    isLoading = true;
+    notifyListeners();
     // await OneSignal.shared.sendTag(email, "yes");
     var url =
         "${kServerUrlName}signup.php";
@@ -383,8 +386,10 @@ print(firebaseUser.user);
         headers: {'Accept': 'application/json'});
     var dec = json.decode(response.body);
     if(response.statusCode == 200){
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => VerifyEmail()));
+      isLoading = false;
+      notifyListeners();
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+          VerifyEmail()), (Route<dynamic> route) => false);
     }else{
       showError();
     }
@@ -394,6 +399,8 @@ print(firebaseUser.user);
   void signInUser(BuildContext context) async {
     print(email);
     print(password);
+    isLoading = true;
+    notifyListeners();
     String url = "${kServerUrlName}login.php";
     http.Response response = await http.post(url,body: ({
       'email':email,
@@ -401,10 +408,13 @@ print(firebaseUser.user);
     }));
     var de = jsonDecode(response.body);
     if(response.statusCode == 200){
+      isLoading = false;
+      notifyListeners();
       switch(de['data'][0]['status']){
         case 0:
           error = "Incorrect password";
-          loading();
+          isLoading = false;
+          notifyListeners();
           break;
         case 1:
           email = de['data'][0]['email'];
@@ -413,21 +423,26 @@ print(firebaseUser.user);
           saveRoleinSharedPref(de['data'][0]['role']);
           switch(de['data'][0]['role']){
             case '1':
-              Navigator.pushReplacementNamed(context, navigationBar);
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(navigationBar, (Route<dynamic> route) => false);
               break;
             case '2':
-              Navigator.pushReplacementNamed(context, resturantHome);
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(resturantHome, (Route<dynamic> route) => false);
               break;
             case '3':
-              Navigator.pushReplacementNamed(context, deliHome);
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(deliHome, (Route<dynamic> route) => false);
           }
           break;
         case 2:
-          loading();
+          isLoading = false;
+          notifyListeners();
           error = "Account is Not Verified";
           break;
         case 3:
-          loading();
+          isLoading = false;
+          notifyListeners();
           error = "Account doesn't exist";
           break;
       }
@@ -463,6 +478,8 @@ print(firebaseUser.user);
     // getStoredId();
     print(email);
     print(code);
+    isLoading = true;
+    notifyListeners();
     String url =
         "${kServerUrlName}verification.php";
     http.Response response = await http.post(url,body: ({
@@ -475,8 +492,13 @@ print(firebaseUser.user);
       email = decode['login'][0]['email'];
       id = decode['login'][0]['id'];
       storeValInSharedPref();
+      isLoading = false;
+      notifyListeners();
       Navigator.pushReplacementNamed(context, signRole);
     }else{
+      isCodeInvalid = true;
+      isLoading = false;
+      notifyListeners();
       print("error");
     }
   }
