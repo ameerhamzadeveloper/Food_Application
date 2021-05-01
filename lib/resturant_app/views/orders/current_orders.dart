@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/resturant_app/model/orders_porvider.dart';
 import 'package:food_delivery_app/resturant_app/model/resturant_profile_provider.dart';
-import 'package:food_delivery_app/resturant_app/views/orders/chat_screen.dart';
 import 'package:provider/provider.dart';
 
 class CurrentOrders extends StatelessWidget {
@@ -82,29 +81,19 @@ class CurrentOrders extends StatelessWidget {
                                 });
                               },
                               child: Text("Deliver to Boy",style:TextStyle(color:Colors.white)),
-                            ),
-                            MaterialButton(
-                              color: kThemeColor,
-                              minWidth: MediaQuery.of(context).size.width,
-                              onPressed: (){
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => DeliverChatScreen(list.id, 'Resturant')
-                                ));
-                              },
-                              child: Text("Chat",style:TextStyle(color:Colors.white)),
                             )
                           ],
                         ),
                       ),
                     );
                   }else{
-                    return Center(child: Text("Waiting for Order"),);
+                    return Center(child: Text("No Current Orders"),);
                   }
                 },
               );
             }
             else{
-              return Center(child: Text(""),);
+              return Center(child: Text("No Current Orders"),);
             }}
             return Padding(
               padding: const EdgeInsets.only(top:20.0),

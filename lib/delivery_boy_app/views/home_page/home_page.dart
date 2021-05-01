@@ -7,7 +7,6 @@ import 'package:food_delivery_app/delivery_boy_app/models/deli_profile_provider.
 import 'package:food_delivery_app/delivery_boy_app/views/orders/current_order.dart';
 import 'package:food_delivery_app/delivery_boy_app/views/orders/recent_order.dart';
 import 'package:food_delivery_app/delivery_boy_app/views/orders/view_order.dart';
-import 'package:food_delivery_app/delivery_boy_app/views/wallet/deli_wallet.dart';
 import 'package:food_delivery_app/resturant_app/model/resturant_profile_provider.dart';
 import 'package:food_delivery_app/resturant_app/views/home/components/circular_indicator.dart';
 import 'package:food_delivery_app/routes/routes_names.dart';
@@ -150,9 +149,7 @@ class _DeliveryBoyHomePageState extends State<DeliveryBoyHomePage> {
             Divider(),
             ListTile(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => DeliWallet()
-                ));
+
               },
               title: Text("Wallet"),
               trailing: Icon(Icons.arrow_forward_ios),

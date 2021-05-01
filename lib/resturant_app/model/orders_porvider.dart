@@ -79,7 +79,7 @@ class OrdersProvider extends ChangeNotifier{
   dynamic totalORder;
   var perEarningCircle;
   var perEarningInside;
-  dynamic cancelOrd;
+
   var perOrderCircle;
   var perOrderInside;
 
@@ -97,22 +97,18 @@ class OrdersProvider extends ChangeNotifier{
       totalORder = dec['data'][0]['total_order'];
       earnings = (dec['data'][0]['total_earning']);
       var ePer = dec['data'][0]['total_earning'];
-      perEarningInside = earnings / 10000 * 100;
-      perEarningCircle = perEarningInside / 100;
+      perEarningInside = earnings * 100 / 10000;
+      perEarningCircle = perEarningInside/100;
       print("falged pay $perEarningInside and $perOrderCircle");
-      perOrderInside = int.parse(totalORder) * 20 / 100;
-      perOrderCircle = (perOrderInside / 100) * 10;
-      print(" order circl $perEarningCircle");
+      perOrderInside = int.parse(totalORder) * 100 / 20;
+      perOrderCircle = perOrderInside /100;
+      // earningPercentage = ePercentage.toDouble();
     }
     print(dec);
     notifyListeners();
   }
   dynamic cancelOrders;
   dynamic rating;
-  dynamic circRating;
-  dynamic circInsideRating;
-  dynamic cancelOrdCir;
-
   Future<void> fetchDashboardCancel(BuildContext context) async{
     final pro = Provider.of<ResturantProfileProvider>(context,listen: false);
     String url = "${kServerUrlName}res_cancel.php";
@@ -122,11 +118,7 @@ class OrdersProvider extends ChangeNotifier{
     var dec = json.decode(response.body);
     if(response.statusCode == 200){
       // earningPercentage = ePercentage.toDouble();
-      cancelOrd = dec['data'][0]['total_order'];
-      var cancelOrder = dec['data'][0]['total_order'];
-      cancelOrders = cancelOrder * 10;
-      cancelOrdCir = (cancelOrder / 10 ).toDouble();
-      print("double $cancelOrdCir");
+      cancelOrders = dec['data'][0]['total_order'];
     }
     print(dec['data'][0]['total_order']);
     notifyListeners();
@@ -140,10 +132,8 @@ class OrdersProvider extends ChangeNotifier{
     var dec = json.decode(response.body);
     if(response.statusCode == 200){
       // earningPercentage = ePercentage.toDouble();
-      rating = dec['data'][0]['rating'];
-      circRating = dec['data'][0]['rating'] / 5;
-      circInsideRating = (dec['data'][0]['rating'] * 10 * 2).round();
-      // rating = (int.parse(ratinag) * 5) / int.parse(totalORder);
+      var ratinag = dec['data'][0]['rating'];
+      rating = (int.parse(ratinag) * 5) / int.parse(totalORder);
     }
     print(dec['data'][0]['rating']);
     notifyListeners();

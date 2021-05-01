@@ -47,12 +47,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     FlatButton(
                       onPressed: () {
+                        messageTextController.clear();
                         _firestore.collection('orders').doc(widget.colRef).collection('chat').add({
                           'text': messageText,
                           'sender': pro.displayName,
-                          'timestamp':Timestamp.now(),
                         });
-                        messageTextController.clear();
                       },
                       child: Text(
                         'Send',
@@ -76,7 +75,7 @@ class MessagesStream extends StatelessWidget {
   Widget build(BuildContext context) {
     final pro = Provider.of<ProfileProvider>(context);
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('orders').doc(docRef).collection('chat').orderBy('timestamp',descending: true).snapshots(),
+      stream: _firestore.collection('orders').doc(docRef).collection('chat').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
@@ -85,7 +84,7 @@ class MessagesStream extends StatelessWidget {
             ),
           );
         }
-        final messages = snapshot.data.docs;
+        final messages = snapshot.data.docs.reversed;
         List<MessageBubble> messageBubbles = [];
         for (var message in messages) {
           final messageText = message.data()['text'];
@@ -122,7 +121,6 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pro = Provider.of<ProfileProvider>(context);
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: Column(
@@ -130,7 +128,7 @@ class MessageBubble extends StatelessWidget {
         isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            sender == pro.displayName ? "You" : sender,
+            sender,
             style: TextStyle(
               fontSize: 12.0,
               color: Colors.black54,
@@ -148,7 +146,7 @@ class MessageBubble extends StatelessWidget {
               topRight: Radius.circular(30.0),
             ),
             elevation: 5.0,
-            color: isMe ? kThemeColor : Colors.white,
+            color: isMe ? Colors.lightBlueAccent : Colors.white,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Text(

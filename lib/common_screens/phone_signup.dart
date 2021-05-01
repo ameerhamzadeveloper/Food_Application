@@ -107,7 +107,7 @@ class _PhoneSignUpState extends State<PhoneSignUp> {
                         onPressed: ()async {
                           if(_key.currentState.validate()){
                             
-                            await onVerifyCode(_phoneController, context,countryCode).whenComplete((){
+                            // await onVerifyCode(_phoneController, context,countryCode).whenComplete((){
                                Navigator.push(context, MaterialPageRoute(
                                 builder: (context) => PhoneCodeVerify(phone: _phoneController,code: countryCode,verificationCode:verificationId)
                             ));
@@ -120,7 +120,7 @@ class _PhoneSignUpState extends State<PhoneSignUp> {
                               //  Navigator.push(context, MaterialPageRoute(
                               //   builder: (context) => PhoneCodeVerify(phone: _phoneController,code: countryCode,)
                             // ));
-                            });
+                            // });
                            
                           }
                         },
@@ -145,7 +145,7 @@ class _PhoneSignUpState extends State<PhoneSignUp> {
      print(number.toString());
     await FirebaseAuth.instance.verifyPhoneNumber(
       
-        phoneNumber: '+92$number',
+        phoneNumber: '$countryCode$number',
         verificationCompleted: (PhoneAuthCredential credential) async {
           await FirebaseAuth.instance
               .signInWithCredential(credential)
@@ -176,71 +176,6 @@ class _PhoneSignUpState extends State<PhoneSignUp> {
           });
         },
         timeout: Duration(seconds: 120));
-  }
-
-  Future<void> verifyPhone(context,phone) async {
-    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId) {
-      this.verificationId = verId;
-    };
-
-    final PhoneCodeSent smsCodeSent = (String verId, [int forceCodeResend]) {
-      this.verificationId = verId;
-      smsCodeDialog(context).then((value) {
-        print('Signed in');
-      });
-    };
-
-    final PhoneVerificationCompleted verifiedSuccess = ( user) {
-      print('verified');
-    };
-
-    final PhoneVerificationFailed veriFailed = ( exception) {
-      print('${exception.message}');
-    };
-
-    await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: phone,
-        codeAutoRetrievalTimeout: autoRetrieve,
-        codeSent: smsCodeSent,
-        timeout: const Duration(seconds: 5),
-        verificationCompleted: verifiedSuccess,
-        verificationFailed: veriFailed);
-  }
-
-  Future<bool> smsCodeDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return new AlertDialog(
-            title: Text('Enter sms Code'),
-            content: TextField(
-              onChanged: (value) {
-                this.smsCode = value;
-              },
-            ),
-            contentPadding: EdgeInsets.all(10.0),
-            actions: <Widget>[
-              new FlatButton(
-                child: Text('Done'),
-                onPressed: () {
-                   final User user = FirebaseAuth.instance.currentUser;
-    final uid = user.uid;
-    print(user.uid);
-                  // FirebaseAuth.instance.currentUser().then((user) {
-                  //   if (user != null) {
-                  //     Navigator.of(context).pop();
-                  //     Navigator.of(context).pushReplacementNamed('/homepage');
-                  //   } else {
-                  //     Navigator.of(context).pop();
-                  //     signIn();
-                  //   }
-                  // });
-                },
-              )
-            ],
-          );
-        });
   }
 
   signIn(context,number) {

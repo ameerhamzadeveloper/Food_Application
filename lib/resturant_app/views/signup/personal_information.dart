@@ -5,10 +5,20 @@ import 'package:food_delivery_app/resturant_app/views/signup/components/personal
 import 'package:food_delivery_app/resturant_app/views/signup/components/personal_sceent_dropdown.dart';
 import 'package:provider/provider.dart';
 import 'package:food_delivery_app/resturant_app/model/resturant_profile_provider.dart';
-import 'package:food_delivery_app/routes/routes_names.dart';
+// import 'package:food_delivery_app/routes/routes_names.dart';
 
 
-class ResturantPersonalInfo extends StatelessWidget {
+class ResturantPersonalInfo extends StatefulWidget {
+  @override
+  _ResturantPersonalInfoState createState() => _ResturantPersonalInfoState();
+}
+
+class _ResturantPersonalInfoState extends State<ResturantPersonalInfo> {
+  @override
+  void initState() {
+    Provider.of<ResturantProfileProvider>(context,listen:false).getIdEmail();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ResturantProfileProvider>(context);
@@ -210,7 +220,7 @@ class ResturantPersonalInfo extends StatelessWidget {
                   onPressed: () {
                     print(provider.lastName);
                     provider.uploadResturantInfo(context);
-                    Navigator.pushNamed(context, resturantHome);
+                  
                   },
                   child: Text(
                     "Submit Form",

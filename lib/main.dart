@@ -11,6 +11,7 @@ import 'package:food_delivery_app/resturant_app/model/orders_porvider.dart';
 import 'package:food_delivery_app/routes/custom_routes.dart';
 import 'package:food_delivery_app/routes/routes_names.dart';
 import 'package:food_delivery_app/start_app_screen.dart';
+import 'resturant_app/views/signup/personal_information.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:food_delivery_app/customer_app/model/navigation_bar_provider.dart';
@@ -140,10 +141,6 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'Food Delivery App',
         theme: ThemeData(
-          inputDecorationTheme: InputDecorationTheme(
-            focusColor: kThemeColor,
-            hoverColor: kThemeColor
-          ),
           appBarTheme: AppBarTheme(
             color: kThemeColor,
             centerTitle: true,
@@ -159,7 +156,9 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         onGenerateRoute: CustomRoutes.allRoutes,
-        initialRoute: splashScreen,
+        // initialRoute: splashScreen,
+        // initialRoute: resturantPersonalInfo,
+        initialRoute: resturantGeneralInfo,
       ),
     );
   }

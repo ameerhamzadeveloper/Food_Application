@@ -58,58 +58,56 @@ class CartItem extends StatelessWidget {
             ],
           ),
           SizedBox(width: 20,),
-          Flexible(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title,style: TextStyle(fontSize: 15,),),
-                    Text(subtitle,style: TextStyle(fontSize: 13),),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: onMinusTap,
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100)
-                            ),
-                            elevation: 3.0,
-                            child: Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: Icon(AntDesign.minus,size: 15,),
-                            ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,style: TextStyle(fontSize: 15,),),
+                  Text(subtitle,style: TextStyle(fontSize: 13),),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: onMinusTap,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100)
+                          ),
+                          elevation: 3.0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: Icon(AntDesign.minus,size: 15,),
                           ),
                         ),
-                        SizedBox(width: 10,),
-                        Text("${qty}x"),
-                        SizedBox(width: 10,),
-                        InkWell(
-                          onTap: onPlusTap,
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            elevation: 3.0,
-                            child: Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: Icon(AntDesign.plus,size: 15),
-                            ),
+                      ),
+                      SizedBox(width: 10,),
+                      Text("${qty}x"),
+                      SizedBox(width: 10,),
+                      InkWell(
+                        onTap: onPlusTap,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          elevation: 3.0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: Icon(AntDesign.plus,size: 15),
                           ),
                         ),
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
+                      ),
+                    ],
+                  )
+                ],
+              )
+            ],
           ),
           SizedBox(width: 10,),
           Column(

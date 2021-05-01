@@ -87,9 +87,12 @@ class _TrackDeliBoyState extends State<TrackDeliBoy> {
                 color: kThemeColor,
                 height: 50,
                 onPressed: (){
-                  print(widget.docRef);
+                  // strem.collection('orders').doc(widget.docRef).update({
+                  //   'customerLat': 37.395660,
+                  //   'customerLong': -121.967071,
+                  // });
                   Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => ChatScreen(widget.docRef)
+                      builder: (context) => ChatScreen('DJLM506941')
                   ));
                 },
                 child: Row(

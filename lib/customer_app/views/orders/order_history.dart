@@ -54,7 +54,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                   child: ListTile(
                     leading: Image.network("https://tripps.live/tripp_food/${ord.resutrantSelfie}"),
                     title: Text(ord.bName ?? "Loading"),
-                    subtitle: Text(ord.items[0].itemDescription ?? "Loading..."),
+                    subtitle: Text(ord.items[i].itemDescription ?? "Loading..."),
                     trailing: Text(finalDate ?? "Loading..."),
                   ),
                 ),

@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/constants.dart';
-import 'package:food_delivery_app/customer_app/model/navigation_bar_provider.dart';
 import 'package:food_delivery_app/customer_app/model/profile_provider.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/cart_map_model.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/cart_model.dart';
@@ -38,8 +37,6 @@ class NearResturantsProvider extends ChangeNotifier{
   dynamic resturantLong;
   dynamic deliveryBoyId;
   dynamic deliveryBoyEmail;
-  dynamic deliveryBoyLat;
-  dynamic deliveryBoyLon;
   int totalPrice = 0;
   int subtotal = 0;
   String otherInstruction = '';
@@ -111,7 +108,7 @@ class NearResturantsProvider extends ChangeNotifier{
       for (var dec in decode['data']) {
         resurantLat = dec['lat'];
         resturantLong = dec['long'];
-        print("near ressssssss ${decode['data']}");
+        print(" near ressssssss ${decode['data']}");
         pro.resturantList.add(
           ResturantsModel(
             bName: dec['b_name'],
@@ -119,7 +116,7 @@ class NearResturantsProvider extends ChangeNotifier{
             id: dec['id'],
             resturantSelfie: dec['resutrant_selfie'],
             minimum: dec['delivery_fee'].toString(),
-            rating: dec['rating'].toString() ?? "0",
+            rating: dec['rating'],
             ratingLength: dec['length'].toString(),
             deliFee: dec['minval'].toString(),
           ),
@@ -177,6 +174,32 @@ class NearResturantsProvider extends ChangeNotifier{
     // print(decodee);
     print(resturantId);
   }
+
+
+  // Future<void> fetchResturantInf()async {
+  //   String url = "${kServerUrlName}fetch_res_info.php";
+  //   http.Response response = await http.post(url,body: ({
+  //     'resturant_id' : resturantId,
+  //     'lat': lat.toString(),
+  //     'long':lon.toString()
+  //   }));
+  //   var decode = jsonDecode(response.body);
+  //   print(decode);
+  //   if(response.statusCode == 200 && decode['data'][0]['status'] == 1){
+  //     resturantEmail = decode['email'];
+  //     resturantName = decode['data'][0]['b_name'];
+  //     resturantImage = decode['data'][0]['resutrant_selfie'];
+  //     getedResturantId = decode['data'][0]['id'];
+  //     resurantLat = decode['data'][0]['lat'];
+  //     resturantDeliPrice = decode['data'][0]['deli_price'];
+  //     resturantLong = decode['data'][0]['long'];
+  //   }
+  //   print("flag lat ${decode['data'][0]['deli_price']}");
+  //   print(decode);
+  //   print(getedResturantId);
+  //   notifyListeners();
+  // }
+
   List<ResturantInfo> resturantInfos;
 
   Future<List<ResturantInfo>> fetchresturantInfo() async {
@@ -274,6 +297,31 @@ class NearResturantsProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  // Future<void> searchResturants(BuildContext context) async {
+  //   String url = "${kServerUrlName}search.php";
+  //   http.Response response = await http.post(url,body: ({
+  //     'lat':lat.toString(),
+  //     'long':lon.toString(),
+  //     'resturantName': search,
+  //   }));
+  //   var decode = json.decode(response.body);
+  //   final pro = Provider.of<ResturantList>(context, listen: false);
+  //   for (var dec in decode['data']) {
+  //     pro.resturantList.add(
+  //       ResturantsModel(
+  //         bName: dec['b_name'],
+  //         description: dec['description'],
+  //         id: dec['id'],
+  //         resturantSelfie: dec['resutrant_selfie'],
+  //         minimum: dec['delivery_fee'].toString(),
+  //         rating: dec['rating'],
+  //         ratingLength: dec['length'].toString(),
+  //         deliFee: dec['minval'].toString(),
+  //       ),
+  //     );
+  //   }
+  //   print("flag serach${decode}");
+  // }
 
   void assignsearchVal(String val){
     search = val;
@@ -339,6 +387,60 @@ class NearResturantsProvider extends ChangeNotifier{
     print("itemQty");
     print("$itemQty");
     print("itemQty");
+    // if(cartItems.isEmpty){
+
+    //       MenuCardItemsModel(
+    //           itemPrice: itmPrice,
+    //           itemName: itmName,
+    //           itemImage: itmImage,
+    //           itemDescription: itmDesc,
+    //           resturantId: restID,
+    //           itemQty: '1'
+    //       )
+    //   );
+    // }else if(cartItems.isNotEmpty){
+    //   for(var cart in cartItems){
+    //     if(cart.itemId == itmId){
+    //       cart.itemQty = (int.parse(cart.itemQty)+1).toString();
+    //     }else{
+    //       cartItems.add(
+    //           MenuCardItemsModel(
+    //               itemPrice: itmPrice,
+    //               itemName: itmName,
+    //               itemImage: itmImage,
+    //               itemDescription: itmDesc,
+    //               resturantId: restID,
+    //               itemQty: '1'
+    //           )
+    //       );
+    //     }
+    //   }
+    // }
+    // if(cartOrderList.length == 0){
+    //   cartOrderList.add(
+    //       CartMapModel(
+    //           itemPrice: itmPrice.toString(),
+    //           itemName: itmName,
+    //           itemDescription: itmDesc,
+    //           itemQty: '1'
+    //       )
+    //   );
+    // }else{
+    //   for(var cart in cartOrderList){
+    //     if(cart.itemName == itmName){
+    //       cart.itemQty = (int.parse(cart.itemQty)+1).toString();
+    //     }else{
+    //       cartOrderList.add(
+    //           CartMapModel(
+    //               itemPrice: itmPrice.toString(),
+    //               itemName: itmName,
+    //               itemDescription: itmDesc,
+    //               itemQty: '1'
+    //           )
+    //       );
+    //     }
+    //   }
+    // }
     print("cartORderLsit ${cartOrderList.length}");
     print("cartItems ${cartItems.length}");
     notifyListeners();
@@ -420,7 +522,7 @@ class NearResturantsProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> payWithCard(token,BuildContext context) async {
+  Future<void> payWithCard(token) async {
     print(totalPrice);
     print(userId);
     print(resturantId);
@@ -439,19 +541,11 @@ class NearResturantsProvider extends ChangeNotifier{
           'description': 'testing pay....',
         }));
     var dec = json.decode(response.body);
-    print(dec['response']);
-    if(dec['response'] == 'Success'){
-      sendOrderToAPI(context,'1');
-    }
+    print(dec);
   }
 
-  void sendOrderToAPI(context,String paymentStatus) async {
-    var resComm = totalPrice * 10 / 100;
-    var deliComm = (resturantInfos[0].deliPrice * 3) / 100;
-    String commison = (resComm + deliComm).floor().toString();
-    print(deliComm);
-    print(resComm);
-    print(commison);
+
+  void sendOrderToAPI(context) async {
     final prov = Provider.of<ProfileProvider>(context,listen: false);
     String url = "${kServerUrlName}order.php";
     http.Client client = http.Client();
@@ -467,35 +561,26 @@ class NearResturantsProvider extends ChangeNotifier{
       'deliveryBoyStatus': "Active",
       'orderId' : '$baseOrderId$secndOrderNum',
       'other_instruction' :otherInstruction,
-      'payment_status': paymentStatus,
-      'comission' : commison,
-      'sub_total': subtotal.toString(),
+      'payment_status': '0',
     };
     int i = 0;
     cartOrderList.forEach((element) {
       String itemName = "${element.itemName.toString()}";
       String itemPrice = "${element.itemPrice.toString()}";
       String itemDesc = "${element.itemDescription.toString()}";
-      String itemQty = "${element.itemQty.toString()}";
       data['total_items[$i]'] = itemName.toString();
       data['item_price[$i]'] = itemPrice.toString();
       data['item_description[$i]'] = itemDesc.toString();
-      data['item_qty[$i]'] = itemQty.toString();
       i++;
     });
     print("flageeeeeeed $data");
     http.Response response = await client.post(url, body: data);
-    var decode = json.decode(response.body);
+    var decode = jsonDecode(response.body);
     print(decode);
     deliveryBoyEmail = decode['delivery_boy_email'];
     deliveryBoyId = decode['delivery_boy_id'];
-    deliveryBoyLat = decode['delivery_boy_lat'];
-    deliveryBoyLon = decode['delivery_boy_long'];
     print(deliveryBoyEmail);
     if(response.statusCode == 200){
-      final navPro = Provider.of<NavigationProvider>(context);
-      navPro.index = 1;
-      sendNotification();
       Navigator.pushReplacementNamed(context, navigationBar);
       sendOrderToFirebase(context);
     }
@@ -527,10 +612,8 @@ class NearResturantsProvider extends ChangeNotifier{
       'resturantName': resturantInfos[0].bName,
       'resturantImage':resturantInfos[0].resutrantSelfie,
       'resturantEmail' : resturantInfos[0].bName,
-      'resturantLat': resturantInfos[0].lat,
-      'resturantLong': resturantInfos[0].long,
-      'deliLat': deliveryBoyLat,
-      'deliLong': deliveryBoyLon,
+      'resturantLat': resurantLat.toString(),
+      'resturantLong': resturantLong.toString()
     });
   }
 

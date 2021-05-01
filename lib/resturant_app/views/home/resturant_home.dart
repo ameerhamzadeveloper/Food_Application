@@ -293,7 +293,7 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
                                 height: 15,
                               ),
                               Text(
-                                "${ordProvdier.rating ?? "0.0"}",
+                                "${ordProvdier.rating ?? "0"}.0",
                                 style: topCardHead,
                               )
                             ],
@@ -308,7 +308,7 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
                                 height: 15,
                               ),
                               Text(
-                                "${ordProvdier.cancelOrd ?? "0"}",
+                                "${ordProvdier.cancelOrders ?? "0"}",
                                 style: topCardHead,
                               )
                             ],
@@ -326,26 +326,27 @@ class _ResturantHomePageState extends State<ResturantHomePage> {
                   children: [
                     CircularIndicator(
                       color: Colors.green,
-                      percent: ordProvdier.perEarningCircle ?? 0.0,
+                      // ordProvdier.earningPercentage ??
+                      percent: 0.0,
                       prcntiner:ordProvdier.perEarningInside==null?"0": "${ordProvdier.perEarningInside.floor() ?? "0"}%",
                       title: "Earnings",
                     ),
                     CircularIndicator(
                       color: Colors.orange,
-                      percent: ordProvdier.perOrderCircle ?? 0.0,
+                      percent: 0.0,
                       prcntiner: "${ordProvdier.perOrderInside ?? "0"}%",
                       title: "Orders",
                     ),
                     CircularIndicator(
                       color: Colors.green,
-                      percent: ordProvdier.circRating ?? 0.0,
-                      prcntiner: "${ordProvdier.circInsideRating ?? "0"}%",
+                      percent: 1.0,
+                      prcntiner: "100%",
                       title: "Rating",
                     ),
                     CircularIndicator(
                       color: Colors.red,
-                      percent: ordProvdier.cancelOrdCir ?? 0.0,
-                      prcntiner: "${ordProvdier.cancelOrders ?? "0"}%",
+                      percent: 0.3,
+                      prcntiner: "30%",
                       title: "Cancel",
                     ),
                   ],

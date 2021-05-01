@@ -42,256 +42,44 @@ class SignUpModel extends ChangeNotifier {
     code = val;
   }
 
-// Text Phonre Auth
- phoneAuth({number,context}) async {
-   print(number);
-    await _firebaseAuth.verifyPhoneNumber(
-        phoneNumber: number,
-        timeout: Duration(seconds: 60),
-        verificationCompleted: (PhoneAuthCredential credential) async {},
-        verificationFailed: (FirebaseAuthException exception) {
-          print(exception);
-        },
-        codeSent: (String verificationId, int resendToken) {
-              // showDialog(context, "+923073057807", verificationId);
-//           Get.dialog(AlertDialog(
-//             title: Text(
-//               "Enter The Code",
-//               style: TextStyle(color: UIDataColors.commonColor),
-//             ),
-//             backgroundColor: Colors.transparent,
-//             content: Container(
-//               height: 200,
-//               child: Column(
-//                 children: [
-//                   Text("kjbkbk"),
-//                   // CommonTextField(
-//                   //   controller: pincontroller,
-//                   //   keyboardType: TextInputType.phone,
-//                   //   validator: (String value) {
-//                   //     if (value.isEmpty) {
-//                   //       return 'Enter the code';
-//                   //     }
-//                   //     return null;
-//                   //   },
-//                   //   labelText: 'Enter Code',
-//                   //   hintText: 'Enter Code',
-//                   // ),
-//                   RaisedButton(
-//                     // sms code
-//                     onPressed: () async {
-//                       var smscode = number;
-//                       PhoneAuthCredential phoneauthcredential =
-//                           PhoneAuthProvider.credential(
-//                               verificationId: verificationId, smsCode: smscode);
-//                       var result =
-//                           await _firebaseAuth.signInWithCredential(phoneauthcredential);
-//                       User user = result.user;
-//                       if (user != null) {
-// //                         collectionReference.doc(result.user.uid).set({
-// //                           "FirstName": " ",
-// //                           "LastName": " ",
-// //                           "Email": " ",
-// //                           "PhoneNumber": user.phoneNumber,
-// //                           "Image": null,
-// //                           "reference":"null",
-// // //                          "reference": user.displayName +
-// // //                              '-' +
-// // //                              loginController.ref,
-// //                         });
-//                         // appController.storage
-//                         //     .write("loggedin", user.refreshToken)
-//                         //     .then((value) {
-//                         //   Get.toNamed(UIData.homeRoute);
-//                         // });
-//                       }
-//                     },
-//                     child: Text(
-//                       "Verify",
-//                       style: TextStyle(
-//                           color: Colors.black, fontWeight: FontWeight.bold),
-//                     ),
-//                     color: Colors.amber,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           )
-//           );
-            showDialog(context, number, verificationId);
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {});
-        
-  }
 
-  void showDialog(context,number,verificationId) {
-  showGeneralDialog(
-    barrierLabel: "Barrier",
-    barrierDismissible: true,
-    barrierColor: Colors.black.withOpacity(0.5),
-    transitionDuration: Duration(milliseconds: 700),
-    context: context,
-    pageBuilder: (_, __, ___) {
-      return Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          height: 300,
-          child: SizedBox.expand(child: MaterialButton(color:Colors.orangeAccent, onPressed: ()async{
-             var smscode = number;
-            //           PhoneAuthCredential phoneauthcredential =
-            //               PhoneAuthProvider.credential(
-            //                   verificationId: verificationId, smsCode: smscode);
-            //           var result =
-            //               await _firebaseAuth.signInWithCredential(phoneauthcredential);
-            //           User user = result.user;
-            final AuthCredential credential = PhoneAuthProvider.credential(
-verificationId: verificationId,
-smsCode: smscode,
-);
-try {
-var firebaseUser =
-await FirebaseAuth.instance.signInWithCredential(credential);
-print("Login Successful");
-print(firebaseUser.user);
-// Navigator.pushReplacementNamed(context, 'homepage');
-
-} catch (e) {
-  print("Login not successful");
-  Navigator.pop(context);
-}
-          },child:Text("Press"))),
-          margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(40),
-          ),
-          
-        ),
-      );
-    },
-    transitionBuilder: (_, anim, __, child) {
-      return SlideTransition(
-        position: Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim),
-        child: child,
-      );
-    },
-  );
-}
-  // Signup user with phone number
-  //   onVerifyCode(String number, BuildContext context, countryCode) async {
-  //   await FirebaseAuth.instance.verifyPhoneNumber(
-  //       phoneNumber: '+92$number',
-  //       verificationCompleted: (PhoneAuthCredential credential) async {
-  //         await FirebaseAuth.instance
-  //             .signInWithCredential(credential)
-  //             .then((value) async {
-  //           if (value.user != null) {
-  //             // Navigator.pushAndRemoveUntil(
-  //             //     context,
-  //             //     MaterialPageRoute(builder: (context) => Home()),
-  //             //     (route) => false);
-  //           }
-  //         });
-  //       },
-  //       verificationFailed: (FirebaseAuthException e) {
-  //         print(e.message);
-  //       },
-  //       codeSent: (String verficationID, int resendToken) {
-  //         // setState(() {
-  //           verificationId = verficationID;
-  //           notifyListeners();
-  //         // });
-  //       },
-  //       codeAutoRetrievalTimeout: (String verificationID) {
-  //         // setState(() {
-  //           verificationId = verificationID;
-  //           notifyListeners();
-  //         // });
-  //       },
-  //       timeout: Duration(seconds: 120));
-  // }
-//   Future<void> onVerifyCode(String number, BuildContext context, countryCode) async {
-//     isCodeSent = true;
-//     final PhoneVerificationCompleted verificationCompleted =
-//         (AuthCredential phoneAuthCredential)async {
-//       _firebaseAuth
-//           .signInWithCredential(phoneAuthCredential);
-//           // .then((UserCredential value) {
-// //         if (value.user.displayName != null && value.user != null) {
-// //           // Handle loogged in state
-// //           print(value.user.phoneNumber);
-// // //           Navigator.pushAndRemoveUntil(
-// // //               context,
-// // //               MaterialPageRoute(
-// // //                 builder: (context) =>BottomNavBar(
-// // // //                  user: value.user,
-// // //                 ),
-// // //               ),
-// // //                   (Route<dynamic> route) => false);
-// //         } else if (value.user != null && value.user.displayName == null) {
-// //           MaterialPageRoute(
-// //             builder: (context) => SignRole(),
-// //           );
-// //         } else {
-// //           Text("Error validating OTP, try again");
-// //         }
-//       // }).catchError((error) {
-//       //   Text("Something went wrong");
-//       // });
-//     };
-// //     final authResult = await _firebaseAuth.signInWithCredential(phoneAuthCredential).catchError((error) {
-// //     // do something with the error
-// //     print(error);
-// // });
-//     final PhoneVerificationFailed verificationFailed = (authException) {
-//       Text(authException.message);
-//       isCodeSent = false;
-//     };
-
-//     final PhoneCodeSent codeSent =
-//         (String verificationId, [int forceResendingToken]) async {
-//       _verificationId = verificationId;
-//     };
-//     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
-//         (String verificationId) {
-//       _verificationId = verificationId;
-//     };
-
-//     await _firebaseAuth.verifyPhoneNumber(
-//         phoneNumber: "+923073057807",
-//         timeout: const Duration(seconds: 60),
-//         verificationCompleted: verificationCompleted,
-//         verificationFailed: verificationFailed,
-//         codeSent: codeSent,
-//         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
-//   }
 
   // on code submit
-//   void onFormSubmitted(
-//       TextEditingController _pinEditingController, BuildContext context,) async {
+  void onFormSubmitted(
+      TextEditingController _pinEditingController, BuildContext context,verificationCode) async {
 
+print("pressed");
 
-//  try {
-//                   await FirebaseAuth.instance
-//                       .signInWithCredential(PhoneAuthProvider.credential(
-//                           verificationId: verificationId, smsCode: _pinEditingController.text))
-//                       .then((value) async {
-//                     if (value.user != null) {
-//                       print(value.user.uid);
-//                       // Navigator.pushAndRemoveUntil(
-//                       //     context,
-//                       //     MaterialPageRoute(builder: (context) => Home()),
-//                       //     (route) => false);
-//                     }
-//                   });
-//                 } catch (e) {
-//                   FocusScope.of(context).unfocus();
-//                   print("invalid otp");
-//                   // _scaffoldkey.currentState
-//                   //     .showSnackBar(SnackBar(content: Text('invalid OTP')));
-//                 }
+  try {
+    print(_pinEditingController.text);
+    print(verificationCode);
+                  await FirebaseAuth.instance
+                      .signInWithCredential(PhoneAuthProvider.credential(
+                          verificationId: verificationCode, smsCode: _pinEditingController.text))
+                      .then((value) async {
+                    if (value.user != null) {
+                      print("Valid User");
+                      print(value.user.uid);
+                      print("Valid User");
+                      // Navigator.pushAndRemoveUntil(
+                      //     context,
+                      //     MaterialPageRoute(builder: (context) => ()),
+                      //     (route) => false);
+                      
+                      //  Navigator.pushReplacement(context, MaterialPageRoute(
+                    // builder: (context) => SignRole()
+                  // ));
+                    }
+                  });
+                } catch (e) {
+                  print(e.toString());
+                  FocusScope.of(context).unfocus();
+                  print("invalid otp");
+                  // _scaffoldkey.currentState
+                  //     .showSnackBar(SnackBar(content: Text('invalid OTP')));
+                }
 
-
+      }
 
 
 //     AuthCredential _authCredential = PhoneAuthProvider.credential(
@@ -390,6 +178,53 @@ print(firebaseUser.user);
       notifyListeners();
       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
           VerifyEmail()), (Route<dynamic> route) => false);
+    }else{
+      showError();
+    }
+  }
+
+  // signUp user with email password
+  Future<void> numberSignup(BuildContext context,phone) async {
+    print(email);
+    print(password);
+    isLoading = true;
+    notifyListeners();
+    // await OneSignal.shared.sendTag(email, "yes");
+    var url =
+        "${kServerUrlName}add_phone_signup.php";
+    http.Response response = await http.post(url,
+        body: ({
+          'phone': phone,
+        }),
+        headers: {'Accept': 'application/json'});
+    var dec = json.decode(response.body);
+    if(response.statusCode == 200){
+      isLoading = false;
+      notifyListeners();
+      if(dec["status"] == "signin"){
+        print("SIgn inkjvnkjnbvkfjbvkfjvbfkjvbfvkjbvfkjvbfkjbfvkjjbvkfjvbfkjvjbfvkjbvfkj");
+        final prefs = await SharedPreferences.getInstance();
+
+      if (prefs.getString("id") != null) {
+        if(prefs.get("role") == "1") {
+          Navigator.pushReplacementNamed(context, navigationBar);
+        }else if(prefs.get("role") == "2"){
+          Navigator.pushReplacementNamed(context, resturantHome);
+        }else if(prefs.get("role") == "3"){
+          Navigator.pushReplacementNamed(context, deliHome);
+        }else{
+          Navigator.pushReplacementNamed(context, startAppScreen);
+        }
+      } else {
+        Navigator.pushReplacementNamed(context, startAppScreen);
+      }
+      }else  if(dec["status"] == "signin"){
+        
+         print("SIgn inkjvnkjnbvkfjbvkfjvbfkjvbfvkjbvfkjvbfkjbfvkjjbvkfjvbfkjvjbfvkjbvfkj");
+          Navigator.pushReplacementNamed(context, signRole);
+      }
+      // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+      //     VerifyEmail()), (Route<dynamic> route) => false);
     }else{
       showError();
     }

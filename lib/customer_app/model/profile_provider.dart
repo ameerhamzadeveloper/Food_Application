@@ -183,8 +183,9 @@ class ProfileProvider extends ChangeNotifier {
   static const String url = "${kServerUrlName}my_total_order.php";
 
   Future<List<MyTotalOrders>> myTotalOrders() async {
+
     http.Response response = await http.post(url,body: ({
-      'customer_id': userid,
+      'customer_id':userid,
     }));
     var dec = json.decode(response.body);
     print(dec);

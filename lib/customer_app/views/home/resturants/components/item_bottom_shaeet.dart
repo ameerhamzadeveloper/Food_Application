@@ -20,7 +20,7 @@ class _ItemBottomSheetState extends State<ItemBottomSheet> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Container(
-      height: MediaQuery.of(context).size.height/1.65,
+      height: MediaQuery.of(context).size.height/1.65  ,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(50),
@@ -61,7 +61,7 @@ class _ItemBottomSheetState extends State<ItemBottomSheet> {
                 ),
                 SizedBox(height: 10,),
                 Text(widget.l.itemDescription),
-                SizedBox(height: 15,),
+                SizedBox(height: 20,),
                 Row(
                   children: [
                     InkWell(

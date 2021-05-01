@@ -8,6 +8,7 @@ import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/resturant_app/views/signup/components/drop_down_list_values.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:food_delivery_app/routes/routes_names.dart';
 
 class ResturantProfileProvider extends ChangeNotifier{
   File selfieImage;
@@ -256,8 +257,15 @@ class ResturantProfileProvider extends ChangeNotifier{
 
   Future<void> getIdEmail() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+  
     userid = preferences.getString('id');
     storedEmail = preferences.getString('email');
+      print("USERIDddddddddddddddddddddddddddddddddddd");
+      print(userid);
+      print(storedEmail);
+      print("USERIDddddddddddddddddddddddddddddddddddd");
+    
+    notifyListeners();
     print(userid);
   }
 
@@ -269,14 +277,45 @@ class ResturantProfileProvider extends ChangeNotifier{
     String url = "${kServerUrlName}resturant_info.php";
     try{
       var request = await http.MultipartRequest('POST',Uri.parse(url));
+      print("text Start");
       print(userid);
+      print(businessName);
+      print(businessDescription);
+      print(firstName);
+      print(lastName);
+      print(businessAddress);
+      print(email);
+      print(contact);
+      print(providerValue);
+      print(segments);
+      print(cuisine);
+      print(city);
+      print(commercialReg);
+      print(lat.toString());
+      print(long.toString());
+      print(noOfBranches);
+      print(doYouHaveFranchise.toString());
+      print(doYouHaveDeliveryService.toString());
+      print(doYouHaveOtherApplications.toString());
+      print(areYouTheOwner.toString());
+      print("TExt End");
+
+      
+    
 
       var selfie = await http.MultipartFile.fromPath('my_selfie', selfieImage.path);
       var resturantImg = await http.MultipartFile.fromPath('resutrant_selfie', resturantImage.path);
       var cardFront = await http.MultipartFile.fromPath('id_front', cnicFront.path);
       var cardBack = await http.MultipartFile.fromPath('id_back', cnicBack.path);
 
-      request.fields['login_id'] = userid;
+      print("imagesssssssss");
+      print(selfie.toString());
+      print(resturantImg.toString());
+      print(cardFront.toString());
+      print(cardBack.toString());
+      print("imagesdfsddvsv");
+
+      request.fields['login_id'] = userid??"100";
       request.fields['b_name'] = businessName;
       request.fields['b_description'] = businessDescription;
       request.fields['firstname'] = firstName;
@@ -302,8 +341,13 @@ class ResturantProfileProvider extends ChangeNotifier{
       request.files.add(cardFront);
       request.files.add(cardBack);
       http.StreamedResponse response = await request.send();
-      response.stream.transform(utf8.decoder).listen((value) {
+      response.stream.transform(utf8.decoder).listen(( value) {
+        // if(value == "You must chose image")
+          Navigator.pushNamed(context, resturantHome);
+        print("valulkdnsbvlfnkjfnvfkjdnvfkjvnkjvn ckvn kvj nkcvn kjcn ljkvn ;vjc jnvkn cvkj ncve");
         print(value);
+        print(value);
+        print("kznvlnvjlkncvlkcnvlkcbnlkvnb lkcvn blkcn lknvl ncvkn vcn lcn lcn lkcn /lkcn v/lkcnv/lkcxbn/lxkcbn");
       });
     }catch(e){
        print(e);
@@ -323,9 +367,13 @@ class ResturantProfileProvider extends ChangeNotifier{
   dynamic rating;
   Future<void> fetchResturantProfile() async {
     String url = "${kServerUrlName}fetch_resturant_profile.php";
+    print("userid");
+    print(userid);
+    print("userid");
     http.Response response = await http.post(url,body: ({
-      'resturant_id': userid,
+      'resturant_id': "60",
     }));
+    print(response.body.toString());
     var decode = jsonDecode(response.body);
     print(response.statusCode);
     if(response.statusCode == 200){

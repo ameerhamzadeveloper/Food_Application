@@ -22,6 +22,9 @@ class ResturantGeneralInfo extends StatefulWidget {
 
 class _ResturantGeneralInfoState extends State<ResturantGeneralInfo> {
 
+  
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   // getting location of resturant
   void getLocation() async {
     Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -36,12 +39,14 @@ class _ResturantGeneralInfoState extends State<ResturantGeneralInfo> {
   void initState() {
     super.initState();
     getLocation();
+    Provider.of<ResturantProfileProvider>(context,listen:false).getIdEmail();
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ResturantProfileProvider>(context);
     return Scaffold(
+      key: _scaffoldKey,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -132,8 +137,13 @@ class _ResturantGeneralInfoState extends State<ResturantGeneralInfo> {
                 ),
                 height: 50,
                 onPressed: () {
-                  Navigator.pushNamed(context, resturantPersonalInfo);
+  if(provider.resturantImage == null || provider.cnicFront == null || provider.cnicBack == null || provider.selfieImage == null){
+    showInSnackBar("All Images are Mandatory");
+  }else{
+ Navigator.pushNamed(context, resturantPersonalInfo);
                   provider.getIdEmail();
+  }
+                 
                 },
                 color: kThemeColor,
                 child: Text(
@@ -150,4 +160,8 @@ class _ResturantGeneralInfoState extends State<ResturantGeneralInfo> {
       ),
     );
   }
+
+void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text(value)));
+}
 }
