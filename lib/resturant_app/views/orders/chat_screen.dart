@@ -3,32 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/customer_app/model/profile_provider.dart';
 import 'package:provider/provider.dart';
-class ChatScreen extends StatefulWidget {
+class DeliverChatScreen extends StatefulWidget {
   final String colRef;
-  ChatScreen(this.colRef);
+  final String name;
+  DeliverChatScreen(this.colRef,this.name);
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  _DeliverChatScreenState createState() => _DeliverChatScreenState();
 }
 FirebaseFirestore _firestore = FirebaseFirestore.instance;
-class _ChatScreenState extends State<ChatScreen> {
 
+class _DeliverChatScreenState extends State<DeliverChatScreen> {
   String messageText;
   TextEditingController messageTextController;
-
-
   @override
   Widget build(BuildContext context) {
-    final pro = Provider.of<ProfileProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chat Screen"),
+        title: Text("Chat"),
       ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            MessagesStream(widget.colRef),
+            MessagesStream(widget.colRef,widget.name),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -49,7 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       onPressed: () {
                         _firestore.collection('orders').doc(widget.colRef).collection('chat').add({
                           'text': messageText,
-                          'sender': pro.displayName,
+                          'sender': widget.name,
                           'timestamp':Timestamp.now(),
                         });
                         messageTextController.clear();
@@ -71,7 +69,8 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 class MessagesStream extends StatelessWidget {
   final String docRef;
-  MessagesStream(this.docRef);
+  final String name;
+  MessagesStream(this.docRef,this.name);
   @override
   Widget build(BuildContext context) {
     final pro = Provider.of<ProfileProvider>(context);
@@ -91,12 +90,13 @@ class MessagesStream extends StatelessWidget {
           final messageText = message.data()['text'];
           final messageSender = message.data()['sender'];
 
-          final currentUser = pro.displayName;
+          final currentUser = name;
 
           final messageBubble = MessageBubble(
             sender: messageSender,
             text: messageText,
             isMe: currentUser == messageSender,
+            name: name,
           );
 
           messageBubbles.add(messageBubble);
@@ -114,11 +114,12 @@ class MessagesStream extends StatelessWidget {
 }
 
 class MessageBubble extends StatelessWidget {
-  MessageBubble({this.sender, this.text, this.isMe});
+  MessageBubble({this.sender, this.text, this.isMe,this.name});
 
   final String sender;
   final String text;
   final bool isMe;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +131,7 @@ class MessageBubble extends StatelessWidget {
         isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            sender == pro.displayName ? "You" : sender,
+            sender == name ? "You" : sender,
             style: TextStyle(
               fontSize: 12.0,
               color: Colors.black54,

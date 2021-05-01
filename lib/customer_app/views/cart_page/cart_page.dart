@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/customer_app/model/navigation_bar_provider.dart';
 import 'package:food_delivery_app/customer_app/model/profile_provider.dart';
+import 'package:food_delivery_app/customer_app/model/resturant/resturant_list.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/resturants_providers.dart';
 import 'package:food_delivery_app/customer_app/model/wallet_provider.dart';
 import 'package:food_delivery_app/customer_app/navigation_bar/navigation_bar.dart';
 import 'package:food_delivery_app/customer_app/views/cart_page/components/cart_item.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:food_delivery_app/constants.dart';
+import 'package:food_delivery_app/customer_app/views/cart_page/fined_boy_animated.dart';
 import 'package:food_delivery_app/customer_app/views/profile/address_page.dart';
 import 'package:food_delivery_app/customer_app/views/wallet/add_card.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +42,7 @@ class _CartPageState extends State<CartPage> {
     final pro = Provider.of<ProfileProvider>(context);
     final wpro = Provider.of<WalletProvider>(context);
     final navPro = Provider.of<NavigationProvider>(context);
+    final markeetPro = Provider.of<ResturantList>(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -229,7 +232,6 @@ class _CartPageState extends State<CartPage> {
                   if(provider.cartOrderList.isEmpty && provider.cartItems.isEmpty){
                     showToast("Please add some items to your Cart", duration: Toast.LENGTH_LONG);
                   }else if(wpro.isCardAdded == true || provider.userFiveOrder >= 5){
-                    // provider.sendOrderToAPI(context);
                     if(provider.isCurrentOrder == true){
                       showToast("You Have Already Active Order", duration: Toast.LENGTH_LONG);
                       navPro.index = 1;
@@ -239,16 +241,34 @@ class _CartPageState extends State<CartPage> {
                         ));
                       });
                     }else{
-                      provider.sendOrderToAPI(context);
-                      // final CreditCard testCard = CreditCard(
-                      //     number: wpro.cardNumber,
-                      //     expMonth: int.parse(wpro.expiryDate.substring(0, 2)),
-                      //     expYear: int.parse(wpro.expiryDate.substring(3, 5)));
-                      // StripePayment.createTokenWithCard(testCard).then((token) {
-                      //   var prov = Provider.of<NearResturantsProvider>(context, listen: false);
-                      //   prov.payWithCard(token.tokenId);
-                      //   print(token.tokenId);
-                      // });
+                      markeetPro.clearMarkeets();
+                      navPro.index = 1;
+                      if(provider.userFiveOrder >= 5){
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (ctx,){
+                              return FindBoyAnimated();
+                            }
+                        );
+                        provider.sendOrderToAPI(context,'0');
+                      }else{
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (ctx,){
+                            return FindBoyAnimated();
+                          }
+                        );
+                        final CreditCard testCard = CreditCard(
+                            number: wpro.cardNumber,
+                            expMonth: int.parse(wpro.expiryDate.substring(0, 2)),
+                            expYear: int.parse(wpro.expiryDate.substring(3, 5)));
+                        StripePayment.createTokenWithCard(testCard).then((token) async{
+                          var prov = Provider.of<NearResturantsProvider>(context, listen: false);
+                          await prov.payWithCard(token.tokenId,context);
+                          print(token.tokenId);
+                        });
+
+                      }
                     }
                   }else{
                     showToast("Please Add Your Credit Card", duration: Toast.LENGTH_LONG);

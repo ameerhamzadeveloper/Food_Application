@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+class DeliWallet extends StatefulWidget {
+  @override
+  _DeliWalletState createState() => _DeliWalletState();
+}
 
-class ResturantWallet extends StatelessWidget {
+class _DeliWalletState extends State<DeliWallet> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

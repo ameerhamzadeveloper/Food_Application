@@ -4,6 +4,7 @@ import 'package:food_delivery_app/constants.dart';
 import 'package:food_delivery_app/customer_app/model/profile_provider.dart';
 import 'package:food_delivery_app/customer_app/model/resturant/resturants_providers.dart';
 import 'package:food_delivery_app/customer_app/views/orders/track_order.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 class CurrentOrders extends StatefulWidget {
   @override
@@ -11,10 +12,14 @@ class CurrentOrders extends StatefulWidget {
 }
 
 class _CurrentOrdersState extends State<CurrentOrders> {
-  String time;
-  @override
-  void initState() {
-    super.initState();
+  double time = 0;
+  double deliTime = 0;
+
+  Future<void> getDistance(double startlat,double startlong,String endlat,String endlong,)async{
+     double distanceInMeters = await Geolocator().distanceBetween(startlat, startlong, int.parse(endlat).toDouble(), int.parse(endlong).toDouble());
+     var km = distanceInMeters /100;
+     time = km * 2;
+     print(time.floor());
   }
   @override
   Widget build(BuildContext context) {
@@ -35,6 +40,8 @@ class _CurrentOrdersState extends State<CurrentOrders> {
             return ListView.builder(
               itemCount: snapshort.data.docs.length,
               itemBuilder: (ctx,i){
+                var list = snapshort.data.docs[i];
+                getDistance(ordPro.lat,ordPro.lon,list['resturantLat'],list['resturantLong']);
                 if(snapshort.data.docs[i]['deliveryBoyStatus'] == "Active"){
                   return Container(
                     width: MediaQuery.of(context).size.width,
@@ -45,7 +52,7 @@ class _CurrentOrdersState extends State<CurrentOrders> {
                         child: Column(
                           children: [
                             SizedBox(height: 20,),
-                            Text("12 min",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
+                            Text("${time.floor().toString()} min",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
                             SizedBox(height: 10,),
                             Text("Your Food is Preparing....",style: TextStyle(fontSize: 24),),
                             Container(
@@ -99,7 +106,7 @@ class _CurrentOrdersState extends State<CurrentOrders> {
                                       builder: (context) => TrackOrder(docRef: snapshort.data.docs[0]['orderId'],)
                                   ));
                                 },
-                                child: Text("Track Order"),
+                                child: Text("Track Order",style: TextStyle(color: Colors.white),),
                               ),
                             )
                           ],

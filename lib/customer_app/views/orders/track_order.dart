@@ -50,8 +50,8 @@ class _TrackOrderState extends State<TrackOrder> {
         builder: (ctx,AsyncSnapshot<DocumentSnapshot> snapshot){
           if(snapshot.hasData){
             print(snapshot.data.data());
-            lat = snapshot.data['customerLat'];
-            long = snapshot.data['customerLong'];
+            lat = snapshot.data['deliLat'];
+            long = snapshot.data['deliLong'];
             print(snapshot.data['orderId']);
             return SingleChildScrollView(
               child: Column(
